@@ -1,0 +1,9 @@
+object MainForm: TMainForm
+  Left = 680
+  Height = 240
+  Top = 250
+  Width = 320
+  Caption = 'Freelancer: Sirius Revival'
+  Position = poDefaultPosOnly
+  LCLVersion = '2.3.0.0'
+end
