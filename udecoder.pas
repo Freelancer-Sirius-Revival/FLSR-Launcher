@@ -5,21 +5,21 @@ unit UDecoder;
 interface
 
 uses
-  Classes;
+  Classes,
+  ULZMACommon;
 
-function Decode(const InputStream, OutputStream: TStream): Int64;
+function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress): Int64;
 
 implementation
 
 uses
-  ULZMADecoder,
-  ULZMACommon;
+  ULZMADecoder;
 
-function Decode(const InputStream, OutputStream: TStream): Int64;
+function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress): Int64;
 var
   Decoder: TLZMADecoder;
   Properties: array[0..4] of Byte; // From Encoder.WriteCoderProperties
-  OutputSize: Int64;       
+  OutputSize: Int64;
   i, v: Byte;
 begin
   Result := -1;
@@ -27,6 +27,7 @@ begin
     Exit;
   Decoder := TLZMADecoder.Create;
   try
+    Decoder.OnProgress := OnProgress;
     if not Decoder.SetDecoderProperties(Properties) then
       Exit;
     OutputSize := 0;
