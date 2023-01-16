@@ -40,50 +40,13 @@ implementation
 uses
   SysUtils;
 
-procedure WriteMetaData(const ContentVersion: Uint32; const BundleType: TBundleType; const FilesChunks: TFilesChunks; const BasePath: String; const Stream: TStream);
-var
-  FilesChunk: TFileInfoArray;
-  ChunkFile: TFileInfo;
-begin
-  // Magic number of file format.
-  Stream.Write(FlsrFileMagicNumbers, SizeOf(FlsrFileMagicNumbers));
-
-  // Version of file format.
-  Stream.WriteByte(FlsrFileVersion);
-
-  // Version of file contents.
-  Stream.WriteDWord(ContentVersion);
-
-  // Bundle type.
-  Stream.WriteByte(Ord(BundleType));
-
-  // Count of Chunks.
-  Stream.WriteWord(Length(FilesChunks));
-
-  for FilesChunk in FilesChunks do
-  begin
-    // Count of files in this chunk.
-    Stream.WriteDWord(Length(FilesChunk));
-
-    for ChunkFile in FilesChunk do
-    begin
-      // First write a normalized relative path of the file.
-      Stream.WriteAnsiString(ChunkFile.Path.Remove(0, BasePath.Length).Trim.Replace('\', '/'));
-      // Second write the uncompressed size of the file.
-      Stream.WriteQWord(ChunkFile.Size);
-      // Third write an MD5 hash of the file's contents.
-      Stream.Write(MD5File(ChunkFile.Path), SizeOf(TMD5Digest));
-    end;
-  end;
-end;
-
 function ReadBundleMetaData(const Stream: TStream): TBundle;
 var
   MagicNumbers: array [0..3] of Char;
   ChunkIndex: ValSInt;
   ChunkFileIndex: ValSInt;
 begin
-  Result.ContentVersion := -1;
+  Result.ContentVersion := High(UInt32);
   Result.BundleType := TUnknownBundle;
   Result.FilesChunks := nil;
 
@@ -101,7 +64,6 @@ begin
 
   // Bundle type.
   Result.BundleType := TBundleType(Stream.ReadByte);
-  ;
 
   // Count of Chunks.
   SetLength(Result.FilesChunks, Stream.ReadWord);
@@ -109,16 +71,16 @@ begin
   for ChunkIndex := 0 to High(Result.FilesChunks) do
   begin
     // Count of files in this chunk.
-    SetLength(Result.FilesChunks[ChunkFileIndex], Stream.ReadDWord);
+    SetLength(Result.FilesChunks[ChunkIndex], Stream.ReadDWord);
 
-    for ChunkFileIndex := 0 to High(esult.FilesChunks[ChunkFileIndex]) do
+    for ChunkFileIndex := 0 to High(Result.FilesChunks[ChunkIndex]) do
     begin
       // First read a normalized relative path of the file.
-      Result.FilesChunks[ChunkFileIndex][ChunkFileIndex].Path := Stream.ReadAnsiString;
+      Result.FilesChunks[ChunkIndex][ChunkFileIndex].Path := Stream.ReadAnsiString;
       // Second read the uncompressed size of the file.
-      Result.FilesChunks[ChunkFileIndex][ChunkFileIndex].Size := Stream.ReadQWord;
+      Result.FilesChunks[ChunkIndex][ChunkFileIndex].Size := Stream.ReadQWord;
       // Third read an MD5 hash of the file's contents.
-      Stream.Read(Result.FilesChunks[ChunkFileIndex][ChunkFileIndex].Checksum, SizeOf(TMD5Digest));
+      Stream.Read(Result.FilesChunks[ChunkIndex][ChunkFileIndex].Checksum, SizeOf(TMD5Digest));
     end;
   end;
 end;
