@@ -1,7 +1,6 @@
 unit UFreelancerAccount;
 
-{$mode objfpc}
-{$H+}
+{$mode ObjFPC}{$H+}
 
 interface
 
