@@ -17,7 +17,7 @@ uses
 
 begin
   RequireDerivedFormResource := True;
-  Application.Title := 'FL:SR Launcher';
+  Application.Title := 'Freelancer: Sirius Revival – Launcher';
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);

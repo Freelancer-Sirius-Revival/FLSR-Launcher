@@ -1,9 +1,26 @@
 object MainForm: TMainForm
-  Left = 680
-  Height = 240
-  Top = 250
-  Width = 320
+  Left = 1395
+  Height = 960
+  Top = 492
+  Width = 1280
   Caption = 'Freelancer: Sirius Revival'
+  ClientHeight = 960
+  ClientWidth = 1280
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poDefaultPosOnly
   LCLVersion = '2.3.0.0'
+  object BGRAVirtualScreen1: TBGRAVirtualScreen
+    Left = 0
+    Height = 960
+    Top = 0
+    Width = 1280
+    OnRedraw = BGRAVirtualScreen1Redraw
+    Align = alClient
+    Alignment = taLeftJustify
+    Caption = 'BGRAVirtualScreen1'
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 0
+  end
 end

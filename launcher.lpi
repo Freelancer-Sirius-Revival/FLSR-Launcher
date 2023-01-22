@@ -7,16 +7,23 @@
         <MainUnitHasUsesSectionForAllUnits Value="False"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="FL:SR Launcher"/>
+      <Title Value="Freelancer: Sirius Revival – Launcher"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
-        <TextName Value="FL:SR Launcher"/>
+        <TextName Value="Freelancer: Sirius Revival – Launcher"/>
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
+      <Resources Count="5">
+        <Resource_0 FileName="title.png" Type="RCDATA" ResourceName="TITLE"/>
+        <Resource_1 FileName="background.jpg" Type="RCDATA" ResourceName="BACKGROUND"/>
+        <Resource_2 FileName="VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
+        <Resource_3 FileName="AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
+        <Resource_4 FileName="AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
+      </Resources>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
@@ -142,6 +149,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="bgracontrols"/>
+      </Item>
+      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>
@@ -206,6 +216,16 @@
       <Unit>
         <Filename Value="LZMA.442b/compression/LZ/ULZBinTree.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ufreelanceraccount.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UFreelancerAccount"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ufreelancerpatches.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UFreelancerPatches"/>
       </Unit>
     </Units>
   </ProjectOptions>
