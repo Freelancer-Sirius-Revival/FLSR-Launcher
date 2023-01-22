@@ -13,13 +13,12 @@ procedure DecodeFilesChunks(const FilesChunks: TFilesChunks; const SourceStream:
 implementation
 
 uses
+  {$IFDEF UNIX}
+  UTF8Process,
+  {$ENDIF}
   SysUtils,
   Math,
-  UDecoder,
-  {$IFDEF UNIX}
-  UTF8Process
-  {$ENDIF}
-  ;
+  UDecoder;
 
 type
   // This class contains all file chunks that will be processed by the bundler threads.

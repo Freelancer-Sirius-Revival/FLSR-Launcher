@@ -14,6 +14,7 @@ uses
   StdCtrls,
   UProcessing,
   BGRAVirtualScreen,
+  BCImageButton,
   BGRABitmap,
   BGRABitmapTypes,
   BGRATextFX,
@@ -22,15 +23,22 @@ uses
 
 type
   TMainForm = class(TForm)
-    BGRAVirtualScreen1: TBGRAVirtualScreen;
-    procedure BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-  private
-    FontCollection: TFreeTypeFontCollection;
+  private                                          
+    BackgroundPanel: TBGRAVirtualScreen;     
     BackgroundImage: TBGRABitmap;
-    TitleImage: TBGRABitmap;
-
+    FontCollection: TFreeTypeFontCollection;
+    procedure BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
+    procedure CloseButtonClick(Sender: TObject);
+    procedure MinimizeButtonClick(Sender: TObject);
+    procedure MoveButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MoveButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure MoveButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);       
+    procedure TspWebsiteButtonClick(Sender: TObject);
+    procedure FlgcDiscordButtonClick(Sender: TObject);
+    procedure FlsrDiscordButtonClick(Sender: TObject);
+    procedure TitleButtonClick(Sender: TObject);
   public
 
   end;
@@ -43,13 +51,18 @@ implementation
 {$R *.lfm}
 
 uses
+  {$IFDEF WINDOWS}
+  windows,
+  {$ENDIF}
+  LCLIntf,
   fphttpclient,
-  opensslsockets;
+  opensslsockets,
+  UFormHeader;
 
 function CreateMainFontRenderer: TBGRAFreeTypeFontRenderer;
 begin
   Result := TBGRAFreeTypeFontRenderer.Create;
-  Result.ShadowOffset := Point(1, 1);
+  Result.ShadowOffset.SetLocation(1, 1);
   Result.ShadowRadius := 2;
   Result.ShadowColor := BGRABlack;
   Result.ShadowVisible := True;
@@ -74,13 +87,14 @@ begin
   Result.FontRenderer := nil;
 end;
 
-procedure TMainForm.BGRAVirtualScreen1Redraw(Sender: TObject; Bitmap: TBGRABitmap);
+procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
 var
   RenderedText: TBGRABitmap;
 begin
-  Bitmap.PutImage(0, 0, BackgroundImage, TDrawMode.dmSet);
-  Bitmap.PutImage(0, 0, TitleImage, TDrawMode.dmLinearBlend);
-  RenderedText := RenderText(BackgroundImage.Width, BackgroundImage.Height, 64, 'Push him out of the airlock!');
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm((Sender as TBGRAVirtualScreen).Width), ScaleDesignToForm((Sender as TBGRAVirtualScreen).Height)), BackgroundImage, TDrawMode.dmSet);
+  //Bitmap.PutImage(0, 0, BackgroundImage, TDrawMode.dmSet);
+  //Bitmap.PutImage(0, 0, TitleImage, TDrawMode.dmLinearBlend);
+  RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(64), 'Push him out of the airlock!');
   Bitmap.PutImage(0, 0, RenderedText, TDrawMode.dmLinearBlend);
   RenderedText.Free;
 end;
@@ -89,6 +103,14 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   Stream: TResourceStream;
 begin
+  BackgroundPanel := TBGRAVirtualScreen.Create(Self);
+  BackgroundPanel.Parent := Self;
+  BackgroundPanel.Width := Self.Width;
+  BackgroundPanel.Height := Self.Height;
+  BackgroundPanel.Align := TAlign.alClient;
+  BackgroundPanel.OnRedraw := @BackgroundPanelRedraw;
+
+
   FontCollection := TFreeTypeFontCollection.Create;
   Stream := TResourceStream.Create(HInstance, 'VIBROCEN', RT_RCDATA);
   FontCollection.AddStream(Stream, True);
@@ -98,17 +120,77 @@ begin
   BackgroundImage := TBGRABitmap.Create(Stream);
   Stream.Free;
 
-  Stream := TResourceStream.Create(HInstance, 'TITLE', RT_RCDATA);
-  TitleImage := TBGRABitmap.Create(Stream);
-  Stream.Free;
+  with CreateFormHeader(BackgroundPanel) do
+  begin
+    CloseButton.OnClick := @CloseButtonClick;
+    MinimizeButton.OnClick := @MinimizeButtonClick;
+    MoveButton.OnMouseDown := @MoveButtonMouseDown;
+    MoveButton.OnMouseMove := @MoveButtonMouseMove;
+    MoveButton.OnMouseUp := @MoveButtonMouseUp;
+    TitleButton.OnClick := @TitleButtonClick;
+    TspWebsiteButton.OnClick := @TspWebsiteButtonClick;
+    FlgcDiscordButton.OnClick := @FlgcDiscordButtonClick;
+    FlsrDiscordButton.OnClick := @FlsrDiscordButtonClick;
+  end;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   BackgroundImage.Free;
-  TitleImage.Free;
   FontCollection.Free;
   SetDefaultFreeTypeFontCollection(nil);
+end;
+
+procedure TMainForm.CloseButtonClick(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+procedure TMainForm.MinimizeButtonClick(Sender: TObject);
+begin
+  Self.WindowState := wsMinimized; // Makes the window disappear forever under Windows. TODO
+  Application.Minimize; // Does not work on Linux because of BorderStyle=bsNone
+end;
+
+var
+  OldPos: TPoint;
+  Repositioning: Boolean;
+
+procedure TMainForm.MoveButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  OldPos.SetLocation(X, Y);
+  Repositioning := True;
+end;
+
+procedure TMainForm.MoveButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if Repositioning then
+    Self.SetBounds(Left + X - OldPos.X, Top + Y - OldPos.Y, Width, Height);
+end;
+
+procedure TMainForm.MoveButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  Repositioning := False;
+end;
+
+procedure TMainForm.TspWebsiteButtonClick(Sender: TObject);
+begin
+  OpenURL('https://the-starport.net/');
+end;
+
+procedure TMainForm.FlgcDiscordButtonClick(Sender: TObject);
+begin
+  OpenURL('https://discord.com/invite/c6wtsBk');
+end;
+
+procedure TMainForm.FlsrDiscordButtonClick(Sender: TObject);
+begin
+  OpenURL('https://discord.gg/GMtyM57egU');
+end;
+
+procedure TMainForm.TitleButtonClick(Sender: TObject);
+begin
+  OpenURL('http://flsr.erikszeug.de');
 end;
 
 //procedure TMainForm.Button1Click(Sender: TObject);

@@ -17,12 +17,16 @@
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="5">
+      <Resources Count="9">
         <Resource_0 FileName="title.png" Type="RCDATA" ResourceName="TITLE"/>
         <Resource_1 FileName="background.jpg" Type="RCDATA" ResourceName="BACKGROUND"/>
         <Resource_2 FileName="VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
         <Resource_3 FileName="AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
         <Resource_4 FileName="AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
+        <Resource_5 FileName="Arrow_29_32.png" Type="RCDATA" ResourceName="ARROW_29_32"/>
+        <Resource_6 FileName="Arrow_35_32.png" Type="RCDATA" ResourceName="ARROW_35_32"/>
+        <Resource_7 FileName="Cancel_04_32.png" Type="RCDATA" ResourceName="CANCEL_04_32"/>
+        <Resource_8 FileName="User_01_32.png" Type="RCDATA" ResourceName="USER_01_32"/>
       </Resources>
     </General>
     <VersionInfo>
@@ -226,6 +230,16 @@
         <Filename Value="ufreelancerpatches.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UFreelancerPatches"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uformheader.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UFormHeader"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uresourceloading.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UResourceLoading"/>
       </Unit>
     </Units>
   </ProjectOptions>
