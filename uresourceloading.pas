@@ -19,8 +19,11 @@ uses
 
 function LoadResource(const Name: String): TStream;
 begin
-  Result := TResourceStream.Create(HInstance, Name, RT_RCDATA);
+  try
+    Result := TResourceStream.Create(HInstance, Name, RT_RCDATA);
+  except
+    Result := nil;
+  end;
 end;
 
 end.
-

@@ -19,26 +19,31 @@ uses
   BGRABitmapTypes,
   BGRATextFX,
   BGRAFreeType,
-  LazFreeTypeFontCollection;
+  LazFreeTypeFontCollection,
+  UFormHeader;
 
 type
   TMainForm = class(TForm)
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-  private                                          
-    BackgroundPanel: TBGRAVirtualScreen;     
+  private
+    BackgroundPanel: TBGRAVirtualScreen;
     BackgroundImage: TBGRABitmap;
     FontCollection: TFreeTypeFontCollection;
+    FormHeader: TFormHeader;
     procedure BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure CloseButtonClick(Sender: TObject);
     procedure MinimizeButtonClick(Sender: TObject);
     procedure MoveButtonMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure MoveButtonMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure MoveButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);       
+    procedure MoveButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure TspWebsiteButtonClick(Sender: TObject);
     procedure FlgcDiscordButtonClick(Sender: TObject);
     procedure FlsrDiscordButtonClick(Sender: TObject);
     procedure TitleButtonClick(Sender: TObject);
+    procedure SetUpFonts;
+    procedure SetUpBackground;
+    procedure ShowPlayersOnline(const Count: Int32);
   public
 
   end;
@@ -55,54 +60,67 @@ uses
   windows,
   {$ENDIF}
   LCLIntf,
-  fphttpclient,
-  opensslsockets,
-  UFormHeader;
+  UResourceLoading,
+  UPlayersOnline,
+  URenderText;
 
-function CreateMainFontRenderer: TBGRAFreeTypeFontRenderer;
-begin
-  Result := TBGRAFreeTypeFontRenderer.Create;
-  Result.ShadowOffset.SetLocation(1, 1);
-  Result.ShadowRadius := 2;
-  Result.ShadowColor := BGRABlack;
-  Result.ShadowVisible := True;
-end;
+//function CreateMainFontRenderer: TBGRAFreeTypeFontRenderer;
+//begin
+//  Result := TBGRAFreeTypeFontRenderer.Create;
+//  Result.ShadowOffset.SetLocation(1, 1);
+//  Result.ShadowRadius := 2;
+//  Result.ShadowColor := BGRABlack;
+//  Result.ShadowVisible := True;
+//end;
 
-function RenderText(const Width: Int32; const Height: Int32; const Size: Int32; const Text: String): TBGRABitmap;
-var
-  TextSize: TSize;
-begin
-  Result := TBGRABitmap.Create(Width, Height);
-  Result.FontRenderer := CreateMainFontRenderer; // Font renderer is freed by bitmap.
-  Result.FontName := 'Vibrocentric';
-  Result.FontFullHeight := Size;
-  Result.FontQuality := fqFineClearTypeRGB;
-  TextSize := Result.TextSize(Text);
-  Result.TextOut(
-    Round(Result.Width / 2) - Round(TextSize.cx / 2),
-    Round(Result.Height / 2) - Round(TextSize.cy / 2),
-    Text,
-    BGRAWhite
-    );
-  Result.FontRenderer := nil;
-end;
+//function RenderText(const Width: Int32; const Height: Int32; const Size: Int32; const Text: String): TBGRABitmap;
+//begin
+//  Result := TBGRABitmap.Create(Width, Height);
+//  Result.FontRenderer := CreateMainFontRenderer; // Font renderer is freed by bitmap.
+//  Result.FontName := 'Vibrocentric';
+//  Result.FontFullHeight := Size;
+//  Result.FontQuality := fqFineClearTypeRGB;
+//  Result.TextMultiline(0, 0, 200, Text, BGRAWhite);
+//  Result.FontRenderer := nil;
+//end;
 
 procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
-var
-  RenderedText: TBGRABitmap;
+//var
+//  RenderedText: TBGRABitmap;
 begin
   Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm((Sender as TBGRAVirtualScreen).Width), ScaleDesignToForm((Sender as TBGRAVirtualScreen).Height)), BackgroundImage, TDrawMode.dmSet);
   //Bitmap.PutImage(0, 0, BackgroundImage, TDrawMode.dmSet);
   //Bitmap.PutImage(0, 0, TitleImage, TDrawMode.dmLinearBlend);
-  RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(64), 'Push him out of the airlock!');
-  Bitmap.PutImage(0, 0, RenderedText, TDrawMode.dmLinearBlend);
-  RenderedText.Free;
+  //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), 'Push him out of the airlock!');
+  //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), (Sender as TControl).Caption);
+  //Bitmap.PutImage(0, 0, RenderedText, TDrawMode.dmLinearBlend);
+  //RenderedText.Free;
 end;
 
-procedure TMainForm.FormCreate(Sender: TObject);
+procedure TMainForm.SetUpFonts;
 var
-  Stream: TResourceStream;
+  Stream: TStream;
 begin
+  FontCollection := TFreeTypeFontCollection.Create;
+  Stream := LoadResource('VIBROCEN');
+  if Assigned(Stream) then
+  begin
+    FontCollection.AddStream(Stream, True);
+    SetDefaultFreeTypeFontCollection(FontCollection);
+  end;
+end;
+
+procedure TMainForm.SetUpBackground;
+var
+  Stream: TStream;
+begin
+  Stream := LoadResource('BACKGROUND');
+  if Assigned(Stream) then
+  begin
+    BackgroundImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+  end;
+
   BackgroundPanel := TBGRAVirtualScreen.Create(Self);
   BackgroundPanel.Parent := Self;
   BackgroundPanel.Width := Self.Width;
@@ -110,17 +128,29 @@ begin
   BackgroundPanel.Align := TAlign.alClient;
   BackgroundPanel.OnRedraw := @BackgroundPanelRedraw;
 
+end;
 
-  FontCollection := TFreeTypeFontCollection.Create;
-  Stream := TResourceStream.Create(HInstance, 'VIBROCEN', RT_RCDATA);
-  FontCollection.AddStream(Stream, True);
-  SetDefaultFreeTypeFontCollection(FontCollection);
+procedure TMainForm.ShowPlayersOnline(const Count: Int32);
+begin
+  if not Assigned(FormHeader.OnlinePlayersPanel) then
+    Exit;
+  if Count < 0 then
+    FormHeader.OnlinePlayersPanel.Caption := 'Server currently offline.'
+  else if Count = 0 then
+    FormHeader.OnlinePlayersPanel.Caption := 'No players on the server.'
+  else if Count = 1 then
+    FormHeader.OnlinePlayersPanel.Caption := Count.ToString + ' player on the server.'
+  else
+    FormHeader.OnlinePlayersPanel.Caption := Count.ToString + ' players on the server.';
+end;
 
-  Stream := TResourceStream.Create(HInstance, 'BACKGROUND', RT_RCDATA);
-  BackgroundImage := TBGRABitmap.Create(Stream);
-  Stream.Free;
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  SetUpFonts;
+  SetUpBackground;
 
-  with CreateFormHeader(BackgroundPanel) do
+  FormHeader := CreateFormHeader(BackgroundPanel);
+  with FormHeader do
   begin
     CloseButton.OnClick := @CloseButtonClick;
     MinimizeButton.OnClick := @MinimizeButtonClick;
@@ -132,10 +162,12 @@ begin
     FlgcDiscordButton.OnClick := @FlgcDiscordButtonClick;
     FlsrDiscordButton.OnClick := @FlsrDiscordButtonClick;
   end;
+  ListenForPlayersOnline(@ShowPlayersOnline);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  StopListeningForPlayersOnline;
   BackgroundImage.Free;
   FontCollection.Free;
   SetDefaultFreeTypeFontCollection(nil);

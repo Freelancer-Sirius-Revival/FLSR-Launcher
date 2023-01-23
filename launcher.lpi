@@ -241,6 +241,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UResourceLoading"/>
       </Unit>
+      <Unit>
+        <Filename Value="uplayersonline.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UPlayersOnline"/>
+      </Unit>
+      <Unit>
+        <Filename Value="urendertext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="URenderText"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

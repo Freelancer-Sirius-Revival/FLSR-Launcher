@@ -8,12 +8,12 @@ uses
   Classes,
   SysUtils,
   Controls,
+  BGRAText,
   BCImageButton,
-  BGRABitmap,
-  BGRABitmapTypes;
+  BCLabel;
 
 type
-  THeader = record
+  TFormHeader = record
     TitleButton: TBCXButton;
     CloseButton: TBCXButton;
     MinimizeButton: TBCXButton;
@@ -21,14 +21,19 @@ type
     FlsrDiscordButton: TBCXButton;
     FlgcDiscordButton: TBCXButton;
     TspWebsiteButton: TBCXButton;
+    OnlinePlayersPanel: TBCLabel;
   end;
 
-function CreateFormHeader(const Owner: TWinControl): THeader;
+function CreateFormHeader(const Owner: TWinControl): TFormHeader;
 
 implementation
 
 uses
-  UResourceLoading;
+  UResourceLoading,
+  BGRABitmap,
+  BGRABitmapTypes,
+  BCTypes,
+  Graphics;
 
 const
   IconButtonMargin = 4;
@@ -53,8 +58,11 @@ begin
   if Assigned(FImage) then
     FImage.Free;
   Stream := LoadResource(NewImageResourceName);
-  FImage := TBGRABitmap.Create(Stream);
-  Stream.Free;
+  if Assigned(Stream) then
+  begin
+    FImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+  end;
 end;
 
 procedure TBitmapButton.DoRenderControl(Sender: TObject; Bitmap: TBGRABitmap; State: TBCGraphicButtonState);
@@ -115,7 +123,7 @@ begin
   Result.ImageResourceName := 'ARROW_29_32';
   Result.ShowHint := True;
   Result.Hint := 'Move';
-end;                 
+end;
 
 function CreateTitleButton(const Owner: TWinControl): TBitmapButton;
 begin
@@ -169,15 +177,34 @@ begin
   Result.Hint := 'Open The Starport website';
 end;
 
-function CreateFormHeader(const Owner: TWinControl): THeader;
+function CreatePlayersOnlineLabel(const Owner: TWinControl; const TopOffset: Int32; const LeftOffset: Int32): TBCLabel;
+begin
+  Result := TBCLabel.Create(Owner);
+  Result.Parent := Owner;
+  Result.Caption := '';
+  Result.Top := TopOffset;
+  Result.Left := LeftOffset;
+  Result.FontEx.Name := 'Vibrocentric';
+  Result.FontEx.Color := clWhite;
+  Result.FontEx.Height := 24;
+  Result.FontEx.Shadow := True;
+  Result.FontEx.ShadowColor := clBlack;
+  Result.FontEx.ShadowOffsetX := 2;
+  Result.FontEx.ShadowOffsetY := 2;
+  Result.FontEx.ShadowRadius := 4;
+  Result.FontEx.SingleLine := True;
+end;
+
+function CreateFormHeader(const Owner: TWinControl): TFormHeader;
 begin
   Result.CloseButton := CreateCloseButton(Owner);
   Result.MinimizeButton := CreateMinimizeButton(Owner, Result.CloseButton.Left - IconButtonMargin - IconButtonSize);
-  Result.MoveButton := CreateMoveButton(Owner, Result.MinimizeButton.Left - IconButtonMargin - IconButtonSize);      
+  Result.MoveButton := CreateMoveButton(Owner, Result.MinimizeButton.Left - IconButtonMargin - IconButtonSize);
   Result.TspWebsiteButton := CreateTspWebsiteButton(Owner, Result.MoveButton.Left - IconButtonMargin * 8 - IconButtonSize);
-  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - IconButtonMargin - IconButtonSize);       
+  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - IconButtonMargin - IconButtonSize);
   Result.FlsrDiscordButton := CreateFlsrDiscordButton(Owner, Result.FlgcDiscordButton.Left - IconButtonMargin - IconButtonSize);
   Result.TitleButton := CreateTitleButton(Owner);
+  Result.OnlinePlayersPanel := CreatePlayersOnlineLabel(Owner, Result.TitleButton.Top + Result.TitleButton.Height - 48, Result.TitleButton.Left * 2 + Result.TitleButton.Width);
 end;
 
 end.

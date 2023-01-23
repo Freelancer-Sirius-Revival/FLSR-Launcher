@@ -6,12 +6,9 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
-  {$IFDEF HASAMIGA}
-  athreads,
-  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, UMainForm
-  { you can add units after this };
+  Forms,
+  UMainForm;
 
 {$R *.res}
 
