@@ -1,0 +1,30 @@
+Installing (instant visible)
+- Repair-Button #1 (small icon)
+- "Check-For-Updates/Download/Start Game" Button #42
+-> Start Game Dropdown Button where I can select my Account to start the game with
+
+Community:
+(medium/big on main site)
+- Current news #8
+- Events #8
+- Online Players #10
+
+(small, icon buttons)
+- FLSR-Discord Button #3
+- TSP-Button #3
+- FGC-Discord-Button #3
+
+Account Manager (own sub menu, hidden at start)
+- Account Manager #5
+- Backup and Restore Accounts #2
+-> Favourite account to show in split button for game start
+
+Settings (own sub menu, hidden at start)
+- "Check automatically" Checkbox #3
+- "Start game automatically" Checkbox #3
+- Window Mode (Borderless, Standard) #3
+- Moving Target Mode #3
+- Screen Resolution (for Fonts) #3
+- Server-IP-Setup #1
+- OpenGL-Renderer Settings #3
+- Turret Zoom Settings #3
