@@ -98,10 +98,10 @@ procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
 begin
   Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), BackgroundImage, TDrawMode.dmSet);
 
-  Bitmap.StretchPutImage(TRect.Create(0, 0, FrameLeftImage.Width, ScaleDesignToForm(BackgroundPanel.Height)), FrameLeftImage, TDrawMode.dmDrawWithTransparency);
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), FrameTopImage.Height), FrameTopImage, TDrawMode.dmDrawWithTransparency);
-  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - FrameRightImage.Width, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameRightImage, TDrawMode.dmDrawWithTransparency);        
-  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - FrameBottomImage.Height, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameBottomImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(FrameLeftImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height)), FrameLeftImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(FrameTopImage.Height div 4 * 3)), FrameTopImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(FrameRightImage.Width div 4 * 3), 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameRightImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(FrameBottomImage.Height div 4 * 3), ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameBottomImage, TDrawMode.dmLinearBlend);
 
   Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(TopLeftFrameImage.Width div 4 * 3), ScaleDesignToForm(TopLeftFrameImage.Height div 4 * 3)), TopLeftFrameImage, TDrawMode.dmDrawWithTransparency);
   Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(TopRightFrameImage.Width div 4 * 3), 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(TopRightFrameImage.Height div 4 * 3)), TopRightFrameImage, TDrawMode.dmDrawWithTransparency);

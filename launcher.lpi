@@ -27,8 +27,8 @@
         <Resource_6 FileName="resources/title.png" Type="RCDATA" ResourceName="TITLE"/>
         <Resource_7 FileName="resources/frame_bottomright.png" Type="RCDATA" ResourceName="FRAME_BOTTOMRIGHT"/>
         <Resource_8 FileName="resources/frame_topright.png" Type="RCDATA" ResourceName="FRAME_TOPRIGHT"/>
-        <Resource_9 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
-        <Resource_10 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
+        <Resource_9 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
+        <Resource_10 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
       </Resources>
     </General>
     <VersionInfo>

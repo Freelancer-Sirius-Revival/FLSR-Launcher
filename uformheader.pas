@@ -91,14 +91,14 @@ begin
     gbsNormal:
     begin
       if Assigned(FDefaultImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmDrawWithTransparency);
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmLinearBlend);
     end;
     gbsActive, gbsHover:
     begin
       if Assigned(FActiveImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FActiveImage, TDrawMode.dmDrawWithTransparency)
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FActiveImage, TDrawMode.dmLinearBlend)
       else if Assigned(FDefaultImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmDrawWithTransparency);
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmLinearBlend);
     end;
   end;
 end;
