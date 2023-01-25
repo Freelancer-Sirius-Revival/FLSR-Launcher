@@ -17,16 +17,18 @@
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="9">
-        <Resource_0 FileName="title.png" Type="RCDATA" ResourceName="TITLE"/>
-        <Resource_1 FileName="background.jpg" Type="RCDATA" ResourceName="BACKGROUND"/>
-        <Resource_2 FileName="VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
-        <Resource_3 FileName="AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
-        <Resource_4 FileName="AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
-        <Resource_5 FileName="Arrow_29_32.png" Type="RCDATA" ResourceName="ARROW_29_32"/>
-        <Resource_6 FileName="Arrow_35_32.png" Type="RCDATA" ResourceName="ARROW_35_32"/>
-        <Resource_7 FileName="Cancel_04_32.png" Type="RCDATA" ResourceName="CANCEL_04_32"/>
-        <Resource_8 FileName="User_01_32.png" Type="RCDATA" ResourceName="USER_01_32"/>
+      <Resources Count="11">
+        <Resource_0 FileName="resources/accounts_64.png" Type="RCDATA" ResourceName="ACCOUNTS"/>
+        <Resource_1 FileName="resources/close_32_selected.png" Type="RCDATA" ResourceName="CLOSE_SELECTED"/>
+        <Resource_2 FileName="resources/close_32.png" Type="RCDATA" ResourceName="CLOSE"/>
+        <Resource_3 FileName="resources/minimize_32_selected.png" Type="RCDATA" ResourceName="MINIMIZE_SELECTED"/>
+        <Resource_4 FileName="resources/minimize_32.png" Type="RCDATA" ResourceName="MINIMIZE"/>
+        <Resource_5 FileName="resources/background_1280x960.jpg" Type="RCDATA" ResourceName="BACKGROUND"/>
+        <Resource_6 FileName="resources/title.png" Type="RCDATA" ResourceName="TITLE"/>
+        <Resource_7 FileName="resources/frame_bottomright.png" Type="RCDATA" ResourceName="FRAME_BOTTOMRIGHT"/>
+        <Resource_8 FileName="resources/frame_topright.png" Type="RCDATA" ResourceName="FRAME_TOPRIGHT"/>
+        <Resource_9 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
+        <Resource_10 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
       </Resources>
     </General>
     <VersionInfo>

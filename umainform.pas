@@ -29,6 +29,14 @@ type
   private
     BackgroundPanel: TBGRAVirtualScreen;
     BackgroundImage: TBGRABitmap;
+    FrameTopImage: TBGRABitmap;
+    FrameRightImage: TBGRABitmap;
+    FrameBottomImage: TBGRABitmap;
+    FrameLeftImage: TBGRABitmap;
+    TopRightFrameImage: TBGRABitmap;
+    TopLeftFrameImage: TBGRABitmap;
+    BottomRightFrameImage: TBGRABitmap;
+    BottomLeftFrameImage: TBGRABitmap;
     FontCollection: TFreeTypeFontCollection;
     FormHeader: TFormHeader;
     procedure BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
@@ -88,9 +96,19 @@ procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
 //var
 //  RenderedText: TBGRABitmap;
 begin
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm((Sender as TBGRAVirtualScreen).Width), ScaleDesignToForm((Sender as TBGRAVirtualScreen).Height)), BackgroundImage, TDrawMode.dmSet);
-  //Bitmap.PutImage(0, 0, BackgroundImage, TDrawMode.dmSet);
-  //Bitmap.PutImage(0, 0, TitleImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), BackgroundImage, TDrawMode.dmSet);
+
+  Bitmap.StretchPutImage(TRect.Create(0, 0, FrameLeftImage.Width, ScaleDesignToForm(BackgroundPanel.Height)), FrameLeftImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), FrameTopImage.Height), FrameTopImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - FrameRightImage.Width, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameRightImage, TDrawMode.dmDrawWithTransparency);        
+  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - FrameBottomImage.Height, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameBottomImage, TDrawMode.dmDrawWithTransparency);
+
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(TopLeftFrameImage.Width div 4 * 3), ScaleDesignToForm(TopLeftFrameImage.Height div 4 * 3)), TopLeftFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(TopRightFrameImage.Width div 4 * 3), 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(TopRightFrameImage.Height div 4 * 3)), TopRightFrameImage, TDrawMode.dmDrawWithTransparency);
+
+  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(BottomLeftFrameImage.Height div 4 * 3), ScaleDesignToForm(BottomLeftFrameImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height)), BottomLeftFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(BottomRightFrameImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(BottomRightFrameImage.Height div 4 * 3), ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), BottomRightFrameImage, TDrawMode.dmDrawWithTransparency);
+
   //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), 'Push him out of the airlock!');
   //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), (Sender as TControl).Caption);
   //Bitmap.PutImage(0, 0, RenderedText, TDrawMode.dmLinearBlend);
@@ -98,16 +116,16 @@ begin
 end;
 
 procedure TMainForm.SetUpFonts;
-var
-  Stream: TStream;
+//var
+//  Stream: TStream;
 begin
-  FontCollection := TFreeTypeFontCollection.Create;
-  Stream := LoadResource('VIBROCEN');
-  if Assigned(Stream) then
-  begin
-    FontCollection.AddStream(Stream, True);
-    SetDefaultFreeTypeFontCollection(FontCollection);
-  end;
+  //FontCollection := TFreeTypeFontCollection.Create;
+  //Stream := LoadResource('VIBROCEN');
+  //if Assigned(Stream) then
+  //begin
+  //  FontCollection.AddStream(Stream, True);
+  //  SetDefaultFreeTypeFontCollection(FontCollection);
+  //end;
 end;
 
 procedure TMainForm.SetUpBackground;
@@ -121,13 +139,42 @@ begin
     Stream.Free;
   end;
 
+  Stream := LoadResource('FRAME');
+  if Assigned(Stream) then
+  begin
+    FrameRightImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+    FrameTopImage := FrameRightImage.RotateCCW;
+    FrameBottomImage := FrameRightImage.RotateCW;
+    FrameLeftImage := TBGRABitmap.Create(FrameRightImage);
+    FrameLeftImage.HorizontalFlip;
+  end;
+
+  Stream := LoadResource('FRAME_TOPRIGHT');
+  if Assigned(Stream) then
+  begin
+    TopRightFrameImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+    TopLeftFrameImage := TBGRABitmap.Create(TopRightFrameImage);
+    TopLeftFrameImage.HorizontalFlip;
+  end;
+
+  Stream := LoadResource('FRAME_BOTTOMRIGHT');
+  if Assigned(Stream) then
+  begin
+    BottomRightFrameImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+    BottomLeftFrameImage := TBGRABitmap.Create(BottomRightFrameImage);
+    BottomLeftFrameImage.HorizontalFlip;
+  end;
+
   BackgroundPanel := TBGRAVirtualScreen.Create(Self);
   BackgroundPanel.Parent := Self;
   BackgroundPanel.Width := Self.Width;
   BackgroundPanel.Height := Self.Height;
   BackgroundPanel.Align := TAlign.alClient;
   BackgroundPanel.OnRedraw := @BackgroundPanelRedraw;
-
+  //BackgroundPanel.Color := cl
 end;
 
 procedure TMainForm.ShowPlayersOnline(const Count: Int32);
@@ -169,6 +216,14 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   StopListeningForPlayersOnline;
   BackgroundImage.Free;
+  FrameTopImage.Free;
+  FrameRightImage.Free;
+  FrameBottomImage.Free;
+  FrameLeftImage.Free;
+  TopRightFrameImage.Free;
+  TopLeftFrameImage.Free;
+  BottomRightFrameImage.Free;
+  BottomLeftFrameImage.Free;
   FontCollection.Free;
   SetDefaultFreeTypeFontCollection(nil);
 end;

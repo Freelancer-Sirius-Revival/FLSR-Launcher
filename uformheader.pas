@@ -36,65 +36,101 @@ uses
   Graphics;
 
 const
-  IconButtonMargin = 4;
-  IconButtonSize = 24;
+  TopBorderDragHeight = 20;
+  BorderPadding = 24;
+  SystemIconButtonMargin = 12;
+  SystemIconButtonSize = 16;
+  CommunityIconButtonSize = 24;
 
 type
   TBitmapButton = class(TBCXButton)
   private
-    FImage: TBGRABitmap;
-    procedure SetImage(const NewImageResourceName: String);
+    FDefaultImage: TBGRABitmap;
+    FActiveImage: TBGRABitmap;
+    procedure SetDefaultImage(const NewDefaultImageResourceName: String);
+    procedure SetActiveImage(const NewActiveImageResourceName: String);
     procedure DoRenderControl(Sender: TObject; Bitmap: TBGRABitmap; State: TBCGraphicButtonState);
   public
-    property ImageResourceName: String write SetImage;
+    property DefaultImageResourceName: String write SetDefaultImage;
+    property ActiveImageResourceName: String write SetActiveImage;
     constructor Create(const AOwner: TWinControl);
     destructor Destroy; override;
   end;
 
-procedure TBitmapButton.SetImage(const NewImageResourceName: String);
+procedure TBitmapButton.SetDefaultImage(const NewDefaultImageResourceName: String);
 var
   Stream: TStream;
 begin
-  if Assigned(FImage) then
-    FImage.Free;
-  Stream := LoadResource(NewImageResourceName);
+  if Assigned(FDefaultImage) then
+    FDefaultImage.Free;
+  Stream := LoadResource(NewDefaultImageResourceName);
   if Assigned(Stream) then
   begin
-    FImage := TBGRABitmap.Create(Stream);
+    FDefaultImage := TBGRABitmap.Create(Stream);
+    Stream.Free;
+  end;
+end;
+
+procedure TBitmapButton.SetActiveImage(const NewActiveImageResourceName: String);
+var
+  Stream: TStream;
+begin
+  if Assigned(FActiveImage) then
+    FActiveImage.Free;
+  Stream := LoadResource(NewActiveImageResourceName);
+  if Assigned(Stream) then
+  begin
+    FActiveImage := TBGRABitmap.Create(Stream);
     Stream.Free;
   end;
 end;
 
 procedure TBitmapButton.DoRenderControl(Sender: TObject; Bitmap: TBGRABitmap; State: TBCGraphicButtonState);
 begin
-  if Assigned(FImage) then
-    Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FImage, TDrawMode.dmLinearBlend);
+  case State of
+    gbsNormal:
+    begin
+      if Assigned(FDefaultImage) then
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmDrawWithTransparency);
+    end;
+    gbsActive, gbsHover:
+    begin
+      if Assigned(FActiveImage) then
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FActiveImage, TDrawMode.dmDrawWithTransparency)
+      else if Assigned(FDefaultImage) then
+        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmDrawWithTransparency);
+    end;
+  end;
 end;
 
 constructor TBitmapButton.Create(const AOwner: TWinControl);
 begin
   inherited Create(AOwner);
   Self.Parent := AOwner;
-  FImage := nil;
+  FDefaultImage := nil;
+  FActiveImage := nil;
   OnRenderControl := @DoRenderControl;
 end;
 
 destructor TBitmapButton.Destroy;
 begin
-  if Assigned(FImage) then
-    FImage.Free;
+  if Assigned(FDefaultImage) then
+    FDefaultImage.Free;
+  if Assigned(FActiveImage) then
+    FActiveImage.Free;
   inherited Destroy;
 end;
 
 function CreateCloseButton(const Owner: TWinControl): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
-  Result.Left := Owner.Width - Result.Width - IconButtonMargin;
+  Result.Width := SystemIconButtonSize;
+  Result.Height := SystemIconButtonSize;
+  Result.Top := BorderPadding;
+  Result.Left := Owner.Width - Result.Width - BorderPadding;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'CANCEL_04_32';
+  Result.DefaultImageResourceName := 'CLOSE';        
+  Result.ActiveImageResourceName := 'CLOSE_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Close';
 end;
@@ -102,38 +138,38 @@ end;
 function CreateMinimizeButton(const Owner: TWinControl; const LeftOffset: Int32): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
+  Result.Width := SystemIconButtonSize;
+  Result.Height := SystemIconButtonSize;
+  Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'ARROW_35_32';
+  Result.DefaultImageResourceName := 'MINIMIZE';    
+  Result.ActiveImageResourceName := 'MINIMIZE_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Minimize';
 end;
 
-function CreateMoveButton(const Owner: TWinControl; const LeftOffset: Int32): TBitmapButton;
+function CreateMoveButton(const Owner: TWinControl): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
-  Result.Left := LeftOffset;
+  Result.Width := Owner.Width;
+  Result.Height := TopBorderDragHeight;
+  Result.Top := 0;
+  Result.Left := 0;
   Result.Cursor := crSize;
-  Result.ImageResourceName := 'ARROW_29_32';
   Result.ShowHint := True;
-  Result.Hint := 'Move';
+  Result.Hint := 'Move window';
 end;
 
 function CreateTitleButton(const Owner: TWinControl): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := 920 div 3 * 2;
-  Result.Height := 210 div 3 * 2;
-  Result.Top := IconButtonMargin;
-  Result.Left := IconButtonMargin;
+  Result.Width := 920 div 4 * 3;
+  Result.Height := 210 div 4 * 3;
+  Result.Top := BorderPadding;
+  Result.Left := 0;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'TITLE';
+  Result.DefaultImageResourceName := 'TITLE';
   Result.ShowHint := True;
   Result.Hint := 'Open Freelancer: Sirius Revival website';
 end;
@@ -141,12 +177,13 @@ end;
 function CreateFlsrDiscordButton(const Owner: TWinControl; const LeftOffset: Int32): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
+  Result.Width := CommunityIconButtonSize;
+  Result.Height := CommunityIconButtonSize;
+  Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'USER_01_32';
+  Result.DefaultImageResourceName := 'ACCOUNTS';        
+  Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Join the Freelancer: Sirius Revival Discord';
 end;
@@ -154,12 +191,13 @@ end;
 function CreateFlgcDiscordButton(const Owner: TWinControl; const LeftOffset: Int32): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
+  Result.Width := CommunityIconButtonSize;
+  Result.Height := CommunityIconButtonSize;
+  Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'USER_01_32';
+  Result.DefaultImageResourceName := 'ACCOUNTS';    
+  Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Join the Freelancer Galactic Community Discord';
 end;
@@ -167,12 +205,13 @@ end;
 function CreateTspWebsiteButton(const Owner: TWinControl; const LeftOffset: Int32): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := IconButtonSize;
-  Result.Height := IconButtonSize;
-  Result.Top := IconButtonMargin;
+  Result.Width := CommunityIconButtonSize;
+  Result.Height := CommunityIconButtonSize;
+  Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.ImageResourceName := 'USER_01_32';
+  Result.DefaultImageResourceName := 'ACCOUNTS';       
+  Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Open The Starport website';
 end;
@@ -184,9 +223,8 @@ begin
   Result.Caption := '';
   Result.Top := TopOffset;
   Result.Left := LeftOffset;
-  Result.FontEx.Name := 'Vibrocentric';
   Result.FontEx.Color := clWhite;
-  Result.FontEx.Height := 24;
+  Result.FontEx.Height := 20;
   Result.FontEx.Shadow := True;
   Result.FontEx.ShadowColor := clBlack;
   Result.FontEx.ShadowOffsetX := 2;
@@ -198,13 +236,13 @@ end;
 function CreateFormHeader(const Owner: TWinControl): TFormHeader;
 begin
   Result.CloseButton := CreateCloseButton(Owner);
-  Result.MinimizeButton := CreateMinimizeButton(Owner, Result.CloseButton.Left - IconButtonMargin - IconButtonSize);
-  Result.MoveButton := CreateMoveButton(Owner, Result.MinimizeButton.Left - IconButtonMargin - IconButtonSize);
-  Result.TspWebsiteButton := CreateTspWebsiteButton(Owner, Result.MoveButton.Left - IconButtonMargin * 8 - IconButtonSize);
-  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - IconButtonMargin - IconButtonSize);
-  Result.FlsrDiscordButton := CreateFlsrDiscordButton(Owner, Result.FlgcDiscordButton.Left - IconButtonMargin - IconButtonSize);
+  Result.MinimizeButton := CreateMinimizeButton(Owner, Result.CloseButton.Left - SystemIconButtonMargin - SystemIconButtonSize);
+  Result.MoveButton := CreateMoveButton(Owner);
+  Result.TspWebsiteButton := CreateTspWebsiteButton(Owner, Result.MinimizeButton.Left - CommunityIconButtonSize - SystemIconButtonMargin);
+  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - SystemIconButtonMargin - CommunityIconButtonSize);
+  Result.FlsrDiscordButton := CreateFlsrDiscordButton(Owner, Result.FlgcDiscordButton.Left - SystemIconButtonMargin - CommunityIconButtonSize);
   Result.TitleButton := CreateTitleButton(Owner);
-  Result.OnlinePlayersPanel := CreatePlayersOnlineLabel(Owner, Result.TitleButton.Top + Result.TitleButton.Height - 48, Result.TitleButton.Left * 2 + Result.TitleButton.Width);
+  Result.OnlinePlayersPanel := CreatePlayersOnlineLabel(Owner, Result.TitleButton.Top + Result.TitleButton.Height - 48, Result.TitleButton.Left + Result.TitleButton.Width);
 end;
 
 end.
