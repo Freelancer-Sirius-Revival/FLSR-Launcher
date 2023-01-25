@@ -17,7 +17,7 @@
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="11">
+      <Resources Count="16">
         <Resource_0 FileName="resources/accounts_64.png" Type="RCDATA" ResourceName="ACCOUNTS"/>
         <Resource_1 FileName="resources/close_32_selected.png" Type="RCDATA" ResourceName="CLOSE_SELECTED"/>
         <Resource_2 FileName="resources/close_32.png" Type="RCDATA" ResourceName="CLOSE"/>
@@ -29,6 +29,11 @@
         <Resource_8 FileName="resources/frame_topright.png" Type="RCDATA" ResourceName="FRAME_TOPRIGHT"/>
         <Resource_9 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
         <Resource_10 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
+        <Resource_11 FileName="resources/title2.png" Type="RCDATA" ResourceName="TITLE2"/>
+        <Resource_12 FileName="resources/Background_Community_FLSR.png" Type="RCDATA" ResourceName="FLSR"/>
+        <Resource_13 FileName="resources/Background_Community_FGC.png" Type="RCDATA" ResourceName="FGC"/>
+        <Resource_14 FileName="resources/Background_Community_TSP.png" Type="RCDATA" ResourceName="TSP"/>
+        <Resource_15 FileName="resources/title3.png" Type="RCDATA" ResourceName="TITLE3"/>
       </Resources>
     </General>
     <VersionInfo>

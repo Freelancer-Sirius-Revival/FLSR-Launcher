@@ -29,6 +29,7 @@ function CreateFormHeader(const Owner: TWinControl): TFormHeader;
 implementation
 
 uses
+  Math,
   UResourceLoading,
   BGRABitmap,
   BGRABitmapTypes,
@@ -36,11 +37,13 @@ uses
   Graphics;
 
 const
-  TopBorderDragHeight = 20;
-  BorderPadding = 24;
+  TopBorderDragHeight = 24;
+  BorderPadding = 48;
+  SystemIconButtonBorderPadding = 7;
   SystemIconButtonMargin = 12;
-  SystemIconButtonSize = 16;
-  CommunityIconButtonSize = 24;
+  SystemIconButtonSize = 12;
+  CommunityIconButtonSize = 72;       
+  CommunityIconButtonMargin = 12;
 
 type
   TBitmapButton = class(TBCXButton)
@@ -126,10 +129,10 @@ begin
   Result := TBitmapButton.Create(Owner);
   Result.Width := SystemIconButtonSize;
   Result.Height := SystemIconButtonSize;
-  Result.Top := BorderPadding;
-  Result.Left := Owner.Width - Result.Width - BorderPadding;
+  Result.Top := SystemIconButtonBorderPadding;
+  Result.Left := Owner.Width - Result.Width - SystemIconButtonBorderPadding;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'CLOSE';        
+  Result.DefaultImageResourceName := 'CLOSE';
   Result.ActiveImageResourceName := 'CLOSE_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Close';
@@ -140,19 +143,19 @@ begin
   Result := TBitmapButton.Create(Owner);
   Result.Width := SystemIconButtonSize;
   Result.Height := SystemIconButtonSize;
-  Result.Top := BorderPadding;
+  Result.Top := SystemIconButtonBorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'MINIMIZE';    
+  Result.DefaultImageResourceName := 'MINIMIZE';
   Result.ActiveImageResourceName := 'MINIMIZE_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Minimize';
 end;
 
-function CreateMoveButton(const Owner: TWinControl): TBitmapButton;
+function CreateMoveButton(const Owner: TWinControl; const Right: Int32): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := Owner.Width;
+  Result.Width := Right;
   Result.Height := TopBorderDragHeight;
   Result.Top := 0;
   Result.Left := 0;
@@ -164,12 +167,12 @@ end;
 function CreateTitleButton(const Owner: TWinControl): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := 920 div 4 * 3;
-  Result.Height := 210 div 4 * 3;
+  Result.Width := 815 div 4 * 3;
+  Result.Height := 200 div 4 * 3;
   Result.Top := BorderPadding;
-  Result.Left := 0;
+  Result.Left := BorderPadding;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'TITLE';
+  Result.DefaultImageResourceName := 'TITLE3';
   Result.ShowHint := True;
   Result.Hint := 'Open Freelancer: Sirius Revival website';
 end;
@@ -178,11 +181,11 @@ function CreateFlsrDiscordButton(const Owner: TWinControl; const LeftOffset: Int
 begin
   Result := TBitmapButton.Create(Owner);
   Result.Width := CommunityIconButtonSize;
-  Result.Height := CommunityIconButtonSize;
+  Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'ACCOUNTS';        
+  Result.DefaultImageResourceName := 'FLSR';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Join the Freelancer: Sirius Revival Discord';
@@ -192,11 +195,11 @@ function CreateFlgcDiscordButton(const Owner: TWinControl; const LeftOffset: Int
 begin
   Result := TBitmapButton.Create(Owner);
   Result.Width := CommunityIconButtonSize;
-  Result.Height := CommunityIconButtonSize;
+  Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'ACCOUNTS';    
+  Result.DefaultImageResourceName := 'FGC';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Join the Freelancer Galactic Community Discord';
@@ -206,11 +209,11 @@ function CreateTspWebsiteButton(const Owner: TWinControl; const LeftOffset: Int3
 begin
   Result := TBitmapButton.Create(Owner);
   Result.Width := CommunityIconButtonSize;
-  Result.Height := CommunityIconButtonSize;
+  Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
   Result.Cursor := crHandPoint;
-  Result.DefaultImageResourceName := 'ACCOUNTS';       
+  Result.DefaultImageResourceName := 'TSP';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Open The Starport website';
@@ -237,12 +240,12 @@ function CreateFormHeader(const Owner: TWinControl): TFormHeader;
 begin
   Result.CloseButton := CreateCloseButton(Owner);
   Result.MinimizeButton := CreateMinimizeButton(Owner, Result.CloseButton.Left - SystemIconButtonMargin - SystemIconButtonSize);
-  Result.MoveButton := CreateMoveButton(Owner);
-  Result.TspWebsiteButton := CreateTspWebsiteButton(Owner, Result.MinimizeButton.Left - CommunityIconButtonSize - SystemIconButtonMargin);
-  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - SystemIconButtonMargin - CommunityIconButtonSize);
-  Result.FlsrDiscordButton := CreateFlsrDiscordButton(Owner, Result.FlgcDiscordButton.Left - SystemIconButtonMargin - CommunityIconButtonSize);
+  Result.MoveButton := CreateMoveButton(Owner, Result.MinimizeButton.Left);
+  Result.TspWebsiteButton := CreateTspWebsiteButton(Owner, Owner.Width - BorderPadding - CommunityIconButtonSize);
+  Result.FlgcDiscordButton := CreateFlgcDiscordButton(Owner, Result.TspWebsiteButton.Left - CommunityIconButtonMargin - CommunityIconButtonSize);
+  Result.FlsrDiscordButton := CreateFlsrDiscordButton(Owner, Result.FlgcDiscordButton.Left - CommunityIconButtonMargin - CommunityIconButtonSize);
   Result.TitleButton := CreateTitleButton(Owner);
-  Result.OnlinePlayersPanel := CreatePlayersOnlineLabel(Owner, Result.TitleButton.Top + Result.TitleButton.Height - 48, Result.TitleButton.Left + Result.TitleButton.Width);
+  Result.OnlinePlayersPanel := CreatePlayersOnlineLabel(Owner, Result.FlsrDiscordButton.Top + Result.FlsrDiscordButton.Height + CommunityIconButtonMargin, Result.FlsrDiscordButton.Left);
 end;
 
 end.

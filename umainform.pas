@@ -95,19 +95,25 @@ uses
 procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
 //var
 //  RenderedText: TBGRABitmap;
+var
+  ScaledBackgroundWidth: Int32;
+  ScaledBackgroundHeight: Int32;
 begin
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), BackgroundImage, TDrawMode.dmSet);
+  ScaledBackgroundWidth := ScaleDesignToForm(BackgroundPanel.Width);       
+  ScaledBackgroundHeight := ScaleDesignToForm(BackgroundPanel.Height);
 
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(FrameLeftImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height)), FrameLeftImage, TDrawMode.dmLinearBlend);
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(FrameTopImage.Height div 4 * 3)), FrameTopImage, TDrawMode.dmLinearBlend);
-  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(FrameRightImage.Width div 4 * 3), 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameRightImage, TDrawMode.dmLinearBlend);
-  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(FrameBottomImage.Height div 4 * 3), ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), FrameBottomImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaledBackgroundWidth, ScaledBackgroundHeight), BackgroundImage, TDrawMode.dmSet);
 
-  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(TopLeftFrameImage.Width div 4 * 3), ScaleDesignToForm(TopLeftFrameImage.Height div 4 * 3)), TopLeftFrameImage, TDrawMode.dmDrawWithTransparency);
-  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(TopRightFrameImage.Width div 4 * 3), 0, ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(TopRightFrameImage.Height div 4 * 3)), TopRightFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(FrameLeftImage.Width), ScaledBackgroundHeight), FrameLeftImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaledBackgroundWidth, ScaleDesignToForm(FrameTopImage.Height)), FrameTopImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(ScaledBackgroundWidth - ScaleDesignToForm(FrameRightImage.Width), 0, ScaledBackgroundWidth, ScaledBackgroundHeight), FrameRightImage, TDrawMode.dmLinearBlend);
+  Bitmap.StretchPutImage(TRect.Create(0, ScaledBackgroundHeight - ScaleDesignToForm(FrameBottomImage.Height), ScaledBackgroundWidth, ScaledBackgroundHeight), FrameBottomImage, TDrawMode.dmLinearBlend);
 
-  Bitmap.StretchPutImage(TRect.Create(0, ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(BottomLeftFrameImage.Height div 4 * 3), ScaleDesignToForm(BottomLeftFrameImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height)), BottomLeftFrameImage, TDrawMode.dmDrawWithTransparency);
-  Bitmap.StretchPutImage(TRect.Create(ScaleDesignToForm(BackgroundPanel.Width) - ScaleDesignToForm(BottomRightFrameImage.Width div 4 * 3), ScaleDesignToForm(BackgroundPanel.Height) - ScaleDesignToForm(BottomRightFrameImage.Height div 4 * 3), ScaleDesignToForm(BackgroundPanel.Width), ScaleDesignToForm(BackgroundPanel.Height)), BottomRightFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(TopLeftFrameImage.Width), ScaleDesignToForm(TopLeftFrameImage.Height)), TopLeftFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(ScaledBackgroundWidth - ScaleDesignToForm(TopRightFrameImage.Width), 0, ScaledBackgroundWidth, ScaleDesignToForm(TopRightFrameImage.Height)), TopRightFrameImage, TDrawMode.dmDrawWithTransparency);
+
+  Bitmap.StretchPutImage(TRect.Create(0, ScaledBackgroundHeight - ScaleDesignToForm(BottomLeftFrameImage.Height), ScaleDesignToForm(BottomLeftFrameImage.Width), ScaledBackgroundHeight), BottomLeftFrameImage, TDrawMode.dmDrawWithTransparency);
+  Bitmap.StretchPutImage(TRect.Create(ScaledBackgroundWidth - ScaleDesignToForm(BottomRightFrameImage.Width), ScaledBackgroundHeight - ScaleDesignToForm(BottomRightFrameImage.Height), ScaledBackgroundWidth, ScaledBackgroundHeight), BottomRightFrameImage, TDrawMode.dmDrawWithTransparency);
 
   //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), 'Push him out of the airlock!');
   //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), (Sender as TControl).Caption);
