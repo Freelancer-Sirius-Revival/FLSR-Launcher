@@ -6,21 +6,19 @@ interface
 
 uses
   Classes,
-  SysUtils,
   Controls,
-  BGRAText,
-  BCImageButton,
-  BCLabel;
+  BCLabel,
+  UBitmapButton;
 
 type
   TFormHeader = record
-    TitleButton: TBCXButton;
-    CloseButton: TBCXButton;
-    MinimizeButton: TBCXButton;
-    MoveButton: TBCXButton;
-    FlsrDiscordButton: TBCXButton;
-    FlgcDiscordButton: TBCXButton;
-    TspWebsiteButton: TBCXButton;
+    TitleButton: TBitmapButton;
+    CloseButton: TBitmapButton;
+    MinimizeButton: TBitmapButton;
+    MoveButton: TBitmapButton;
+    FlsrDiscordButton: TBitmapButton;
+    FlgcDiscordButton: TBitmapButton;
+    TspWebsiteButton: TBitmapButton;
     OnlinePlayersPanel: TBCLabel;
   end;
 
@@ -30,10 +28,6 @@ implementation
 
 uses
   Math,
-  UResourceLoading,
-  BGRABitmap,
-  BGRABitmapTypes,
-  BCTypes,
   Graphics;
 
 const
@@ -44,85 +38,6 @@ const
   SystemIconButtonSize = 12;
   CommunityIconButtonSize = 72;       
   CommunityIconButtonMargin = 12;
-
-type
-  TBitmapButton = class(TBCXButton)
-  private
-    FDefaultImage: TBGRABitmap;
-    FActiveImage: TBGRABitmap;
-    procedure SetDefaultImage(const NewDefaultImageResourceName: String);
-    procedure SetActiveImage(const NewActiveImageResourceName: String);
-    procedure DoRenderControl(Sender: TObject; Bitmap: TBGRABitmap; State: TBCGraphicButtonState);
-  public
-    property DefaultImageResourceName: String write SetDefaultImage;
-    property ActiveImageResourceName: String write SetActiveImage;
-    constructor Create(const AOwner: TWinControl);
-    destructor Destroy; override;
-  end;
-
-procedure TBitmapButton.SetDefaultImage(const NewDefaultImageResourceName: String);
-var
-  Stream: TStream;
-begin
-  if Assigned(FDefaultImage) then
-    FDefaultImage.Free;
-  Stream := LoadResource(NewDefaultImageResourceName);
-  if Assigned(Stream) then
-  begin
-    FDefaultImage := TBGRABitmap.Create(Stream);
-    Stream.Free;
-  end;
-end;
-
-procedure TBitmapButton.SetActiveImage(const NewActiveImageResourceName: String);
-var
-  Stream: TStream;
-begin
-  if Assigned(FActiveImage) then
-    FActiveImage.Free;
-  Stream := LoadResource(NewActiveImageResourceName);
-  if Assigned(Stream) then
-  begin
-    FActiveImage := TBGRABitmap.Create(Stream);
-    Stream.Free;
-  end;
-end;
-
-procedure TBitmapButton.DoRenderControl(Sender: TObject; Bitmap: TBGRABitmap; State: TBCGraphicButtonState);
-begin
-  case State of
-    gbsNormal:
-    begin
-      if Assigned(FDefaultImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmLinearBlend);
-    end;
-    gbsActive, gbsHover:
-    begin
-      if Assigned(FActiveImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FActiveImage, TDrawMode.dmLinearBlend)
-      else if Assigned(FDefaultImage) then
-        Bitmap.StretchPutImage(TRect.Create(0, 0, ScaleDesignToForm(Width), ScaleDesignToForm(Height)), FDefaultImage, TDrawMode.dmLinearBlend);
-    end;
-  end;
-end;
-
-constructor TBitmapButton.Create(const AOwner: TWinControl);
-begin
-  inherited Create(AOwner);
-  Self.Parent := AOwner;
-  FDefaultImage := nil;
-  FActiveImage := nil;
-  OnRenderControl := @DoRenderControl;
-end;
-
-destructor TBitmapButton.Destroy;
-begin
-  if Assigned(FDefaultImage) then
-    FDefaultImage.Free;
-  if Assigned(FActiveImage) then
-    FActiveImage.Free;
-  inherited Destroy;
-end;
 
 function CreateCloseButton(const Owner: TWinControl): TBitmapButton;
 begin

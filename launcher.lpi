@@ -17,7 +17,7 @@
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="16">
+      <Resources Count="21">
         <Resource_0 FileName="resources/accounts_64.png" Type="RCDATA" ResourceName="ACCOUNTS"/>
         <Resource_1 FileName="resources/close_32_selected.png" Type="RCDATA" ResourceName="CLOSE_SELECTED"/>
         <Resource_2 FileName="resources/close_32.png" Type="RCDATA" ResourceName="CLOSE"/>
@@ -34,6 +34,11 @@
         <Resource_13 FileName="resources/Background_Community_FGC.png" Type="RCDATA" ResourceName="FGC"/>
         <Resource_14 FileName="resources/Background_Community_TSP.png" Type="RCDATA" ResourceName="TSP"/>
         <Resource_15 FileName="resources/title3.png" Type="RCDATA" ResourceName="TITLE3"/>
+        <Resource_16 FileName="resources/AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
+        <Resource_17 FileName="resources/main_button_selected.png" Type="RCDATA" ResourceName="MAIN_BUTTON_SELECTED"/>
+        <Resource_18 FileName="resources/main_button.png" Type="RCDATA" ResourceName="MAIN_BUTTON"/>
+        <Resource_19 FileName="resources/AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
+        <Resource_20 FileName="resources/VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
       </Resources>
     </General>
     <VersionInfo>
@@ -102,6 +107,7 @@
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
+            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -135,6 +141,7 @@
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
+            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -257,6 +264,16 @@
         <Filename Value="urendertext.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="URenderText"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uformfooter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UFormFooter"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ubitmapbutton.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UBitmapButton"/>
       </Unit>
     </Units>
   </ProjectOptions>

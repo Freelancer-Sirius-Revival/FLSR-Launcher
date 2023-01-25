@@ -20,7 +20,8 @@ uses
   BGRATextFX,
   BGRAFreeType,
   LazFreeTypeFontCollection,
-  UFormHeader;
+  UFormHeader,
+  UFormFooter;
 
 type
   TMainForm = class(TForm)
@@ -38,7 +39,8 @@ type
     BottomRightFrameImage: TBGRABitmap;
     BottomLeftFrameImage: TBGRABitmap;
     FontCollection: TFreeTypeFontCollection;
-    FormHeader: TFormHeader;
+    FormHeader: TFormHeader;                           
+    FormFooter: TFormFooter;
     procedure BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure CloseButtonClick(Sender: TObject);
     procedure MinimizeButtonClick(Sender: TObject);
@@ -70,31 +72,10 @@ uses
   LCLIntf,
   UResourceLoading,
   UPlayersOnline,
-  URenderText;
-
-//function CreateMainFontRenderer: TBGRAFreeTypeFontRenderer;
-//begin
-//  Result := TBGRAFreeTypeFontRenderer.Create;
-//  Result.ShadowOffset.SetLocation(1, 1);
-//  Result.ShadowRadius := 2;
-//  Result.ShadowColor := BGRABlack;
-//  Result.ShadowVisible := True;
-//end;
-
-//function RenderText(const Width: Int32; const Height: Int32; const Size: Int32; const Text: String): TBGRABitmap;
-//begin
-//  Result := TBGRABitmap.Create(Width, Height);
-//  Result.FontRenderer := CreateMainFontRenderer; // Font renderer is freed by bitmap.
-//  Result.FontName := 'Vibrocentric';
-//  Result.FontFullHeight := Size;
-//  Result.FontQuality := fqFineClearTypeRGB;
-//  Result.TextMultiline(0, 0, 200, Text, BGRAWhite);
-//  Result.FontRenderer := nil;
-//end;
+  URenderText
+  {,MMSystem};
 
 procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
-//var
-//  RenderedText: TBGRABitmap;
 var
   ScaledBackgroundWidth: Int32;
   ScaledBackgroundHeight: Int32;
@@ -114,24 +95,19 @@ begin
 
   Bitmap.StretchPutImage(TRect.Create(0, ScaledBackgroundHeight - ScaleDesignToForm(BottomLeftFrameImage.Height), ScaleDesignToForm(BottomLeftFrameImage.Width), ScaledBackgroundHeight), BottomLeftFrameImage, TDrawMode.dmDrawWithTransparency);
   Bitmap.StretchPutImage(TRect.Create(ScaledBackgroundWidth - ScaleDesignToForm(BottomRightFrameImage.Width), ScaledBackgroundHeight - ScaleDesignToForm(BottomRightFrameImage.Height), ScaledBackgroundWidth, ScaledBackgroundHeight), BottomRightFrameImage, TDrawMode.dmDrawWithTransparency);
-
-  //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), 'Push him out of the airlock!');
-  //RenderedText := RenderText(ScaleDesignToForm(BackgroundImage.Width), ScaleDesignToForm(BackgroundImage.Height), ScaleDesignToForm(32), (Sender as TControl).Caption);
-  //Bitmap.PutImage(0, 0, RenderedText, TDrawMode.dmLinearBlend);
-  //RenderedText.Free;
 end;
 
 procedure TMainForm.SetUpFonts;
-//var
-//  Stream: TStream;
+var
+  Stream: TStream;
 begin
-  //FontCollection := TFreeTypeFontCollection.Create;
-  //Stream := LoadResource('VIBROCEN');
-  //if Assigned(Stream) then
-  //begin
-  //  FontCollection.AddStream(Stream, True);
-  //  SetDefaultFreeTypeFontCollection(FontCollection);
-  //end;
+  FontCollection := TFreeTypeFontCollection.Create;
+  Stream := LoadResource('AGENCYR');
+  if Assigned(Stream) then
+  begin
+    FontCollection.AddStream(Stream, True);
+    SetDefaultFreeTypeFontCollection(FontCollection);
+  end;
 end;
 
 procedure TMainForm.SetUpBackground;
@@ -180,7 +156,6 @@ begin
   BackgroundPanel.Height := Self.Height;
   BackgroundPanel.Align := TAlign.alClient;
   BackgroundPanel.OnRedraw := @BackgroundPanelRedraw;
-  //BackgroundPanel.Color := cl
 end;
 
 procedure TMainForm.ShowPlayersOnline(const Count: Int32);
@@ -214,8 +189,11 @@ begin
     TspWebsiteButton.OnClick := @TspWebsiteButtonClick;
     FlgcDiscordButton.OnClick := @FlgcDiscordButtonClick;
     FlsrDiscordButton.OnClick := @FlsrDiscordButtonClick;
+    //FlsrDiscordButton.OnMouseEnter := @FlsrDiscordButtonMouseEnter;
   end;
   ListenForPlayersOnline(@ShowPlayersOnline);
+
+  FormFooter := CreateFormFooter(BackgroundPanel);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -267,7 +245,12 @@ begin
 end;
 
 procedure TMainForm.TspWebsiteButtonClick(Sender: TObject);
+//var
+  //Stream: TResourceStream;
 begin
+  //Stream := LoadResource('UI_PRIMARY_WINDOW_OPEN');
+  //PlaySound(PChar(Stream.Memory), 0, SND_MEMORY or SND_ASYNC);
+  //Stream.Free;
   OpenURL('https://the-starport.net/');
 end;
 
