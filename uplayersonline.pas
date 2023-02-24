@@ -56,7 +56,7 @@ begin
   begin
     if MilliSecondsBetween(LastFetch, Now) < 30000 then
     begin
-      Sleep(100); // Sleep must not be too big or closing the application may be blocked by it.
+      Sleep(20); // Sleep must not be too big or closing the application may be blocked by it.
       Continue;
     end;
 
