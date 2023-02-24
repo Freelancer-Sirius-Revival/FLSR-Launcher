@@ -44,7 +44,7 @@ end;
 
 procedure TPlayersOnlineThread.Execute;
 var
-  Response: TStream;
+  Response: TStream = nil;
   Ini: TIniFile = nil;
   Data: TStrings = nil;
   PlayerOnline: Int32;
@@ -63,31 +63,31 @@ begin
     LastFetch := Now;
     if Assigned(PlayersOnlineCallback) then
     begin
-      try
-        Response := TMemoryStream.Create;
-        TFPHttpClient.SimpleGet('http://srv.fl-sr.eu:4040/Server.ini', Response); // Throws Errors with the HTTP codes
-        Response.Position := 0;
-        Ini := TMemIniFile.Create(Response);
-        FreeAndNil(Response);
-        Data := TStringList.Create;
-        Ini.ReadSectionValues('data', Data);
-        if TryStrToInt(Data.Values['playeronline'], PlayerOnline) then
-        begin
-          FPlayersOnline := PlayerOnline;
-          Queue(@CallCallback);
-        end;
-      finally
+      try      
         try
-          if Assigned(Response) then
-            Response.Free;
-          if Assigned(Ini) then
-            Ini.Free;
-          if Assigned(Data) then
-            Data.Free;
+          Response := TMemoryStream.Create;
+          TFPHttpClient.SimpleGet('http://srv.fl-sr.eu:4040/Server.ini', Response); // Throws Errors with the HTTP codes
+          Response.Position := 0;
+          Ini := TMemIniFile.Create(Response);
+          FreeAndNil(Response);
+          Data := TStringList.Create;
+          Ini.ReadSectionValues('data', Data);
+          if TryStrToInt(Data.Values['playeronline'], PlayerOnline) then
+          begin
+            FPlayersOnline := PlayerOnline;
+            Queue(@CallCallback);
+          end;
         except
           FPlayersOnline := -1;
           Queue(@CallCallback);
         end;
+      finally
+        if Assigned(Response) then
+          Response.Free;
+        if Assigned(Ini) then
+          Ini.Free;
+        if Assigned(Data) then
+          Data.Free;
       end;
     end;
   end;
