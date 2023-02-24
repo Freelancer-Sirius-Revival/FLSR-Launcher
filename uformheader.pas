@@ -80,11 +80,12 @@ end;
 function CreateTitleButton(const Owner: TWinControl): TBitmapButton;
 begin
   Result := TBitmapButton.Create(Owner);
-  Result.Width := 815 div 4 * 3;
-  Result.Height := 200 div 4 * 3;
-  Result.Top := BorderPadding;
-  Result.Left := BorderPadding;
-  Result.DefaultImageResourceName := 'TITLE3';
+  Result.Width := 906 div 6 * 4;
+  Result.Height := 294 div 6 * 4;
+  Result.Top := BorderPadding div 2;
+  Result.Left := BorderPadding div 2;
+  Result.DefaultImageResourceName := 'LOGO';      
+  Result.ActiveImageResourceName := 'LOGO_SELECTED';
   Result.ShowHint := True;
   Result.Hint := 'Open Freelancer: Sirius Revival website';
 end;

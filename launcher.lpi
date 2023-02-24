@@ -17,30 +17,29 @@
         <TextDesc Value="Installer and launcher for Freelancer: Sirius Revival"/>
       </XPManifest>
       <Icon Value="0"/>
-      <Resources Count="23">
+      <Resources Count="22">
         <Resource_0 FileName="resources/accounts_64.png" Type="RCDATA" ResourceName="ACCOUNTS"/>
         <Resource_1 FileName="resources/close_32_selected.png" Type="RCDATA" ResourceName="CLOSE_SELECTED"/>
         <Resource_2 FileName="resources/close_32.png" Type="RCDATA" ResourceName="CLOSE"/>
         <Resource_3 FileName="resources/minimize_32_selected.png" Type="RCDATA" ResourceName="MINIMIZE_SELECTED"/>
         <Resource_4 FileName="resources/minimize_32.png" Type="RCDATA" ResourceName="MINIMIZE"/>
         <Resource_5 FileName="resources/background_1280x960.jpg" Type="RCDATA" ResourceName="BACKGROUND"/>
-        <Resource_6 FileName="resources/title.png" Type="RCDATA" ResourceName="TITLE"/>
-        <Resource_7 FileName="resources/frame_bottomright.png" Type="RCDATA" ResourceName="FRAME_BOTTOMRIGHT"/>
-        <Resource_8 FileName="resources/frame_topright.png" Type="RCDATA" ResourceName="FRAME_TOPRIGHT"/>
-        <Resource_9 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
-        <Resource_10 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
-        <Resource_11 FileName="resources/title2.png" Type="RCDATA" ResourceName="TITLE2"/>
-        <Resource_12 FileName="resources/Background_Community_FLSR.png" Type="RCDATA" ResourceName="FLSR"/>
-        <Resource_13 FileName="resources/Background_Community_FGC.png" Type="RCDATA" ResourceName="FGC"/>
-        <Resource_14 FileName="resources/Background_Community_TSP.png" Type="RCDATA" ResourceName="TSP"/>
-        <Resource_15 FileName="resources/title3.png" Type="RCDATA" ResourceName="TITLE3"/>
-        <Resource_16 FileName="resources/AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
-        <Resource_17 FileName="resources/main_button_selected.png" Type="RCDATA" ResourceName="MAIN_BUTTON_SELECTED"/>
-        <Resource_18 FileName="resources/main_button.png" Type="RCDATA" ResourceName="MAIN_BUTTON"/>
-        <Resource_19 FileName="resources/AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
-        <Resource_20 FileName="resources/VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
-        <Resource_21 FileName="resources/mouse.png" Type="RCDATA" ResourceName="MOUSE"/>
-        <Resource_22 FileName="resources/move.png" Type="RCDATA" ResourceName="MOVE"/>
+        <Resource_6 FileName="resources/frame_bottomright.png" Type="RCDATA" ResourceName="FRAME_BOTTOMRIGHT"/>
+        <Resource_7 FileName="resources/frame_topright.png" Type="RCDATA" ResourceName="FRAME_TOPRIGHT"/>
+        <Resource_8 FileName="resources/accounts_64_selected.png" Type="RCDATA" ResourceName="ACCOUNTS_SELECTED"/>
+        <Resource_9 FileName="resources/frame.png" Type="RCDATA" ResourceName="FRAME"/>
+        <Resource_10 FileName="resources/Background_Community_FLSR.png" Type="RCDATA" ResourceName="FLSR"/>
+        <Resource_11 FileName="resources/Background_Community_FGC.png" Type="RCDATA" ResourceName="FGC"/>
+        <Resource_12 FileName="resources/Background_Community_TSP.png" Type="RCDATA" ResourceName="TSP"/>
+        <Resource_13 FileName="resources/AgencyB.TTF" Type="RCDATA" ResourceName="AGENCYB"/>
+        <Resource_14 FileName="resources/main_button_selected.png" Type="RCDATA" ResourceName="MAIN_BUTTON_SELECTED"/>
+        <Resource_15 FileName="resources/main_button.png" Type="RCDATA" ResourceName="MAIN_BUTTON"/>
+        <Resource_16 FileName="resources/AgencyR.TTF" Type="RCDATA" ResourceName="AGENCYR"/>
+        <Resource_17 FileName="resources/VIBROCEN.TTF" Type="RCDATA" ResourceName="VIBROCEN"/>
+        <Resource_18 FileName="resources/mouse.png" Type="RCDATA" ResourceName="MOUSE"/>
+        <Resource_19 FileName="resources/move.png" Type="RCDATA" ResourceName="MOVE"/>
+        <Resource_20 FileName="resources/FLSR_Logo_selected.png" Type="RCDATA" ResourceName="LOGO_SELECTED"/>
+        <Resource_21 FileName="resources/FLSR_Logo.png" Type="RCDATA" ResourceName="LOGO"/>
       </Resources>
     </General>
     <VersionInfo>
