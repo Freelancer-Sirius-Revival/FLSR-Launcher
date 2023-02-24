@@ -39,7 +39,7 @@ type
     BottomRightFrameImage: TBGRABitmap;
     BottomLeftFrameImage: TBGRABitmap;
     FontCollection: TFreeTypeFontCollection;
-    FormHeader: TFormHeader;                           
+    FormHeader: TFormHeader;
     FormFooter: TFormFooter;
     procedure BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
     procedure CloseButtonClick(Sender: TObject);
@@ -53,6 +53,7 @@ type
     procedure TitleButtonClick(Sender: TObject);
     procedure SetUpFonts;
     procedure SetUpBackground;
+    procedure SetUpCursor(const ResourceName: String; const DefaultSize: Uint8; const UnscaledHotSpot: TPoint; const TargetCursorIndex: Int32);
     procedure ShowPlayersOnline(const Count: Int32);
   public
 
@@ -72,15 +73,16 @@ uses
   LCLIntf,
   UResourceLoading,
   UPlayersOnline,
-  URenderText
-  {,MMSystem};
+  URenderText,
+  Math,
+  BGRAIconCursor;
 
 procedure TMainForm.BackgroundPanelRedraw(Sender: TObject; Bitmap: TBGRABitmap);
 var
   ScaledBackgroundWidth: Int32;
   ScaledBackgroundHeight: Int32;
 begin
-  ScaledBackgroundWidth := ScaleDesignToForm(BackgroundPanel.Width);       
+  ScaledBackgroundWidth := ScaleDesignToForm(BackgroundPanel.Width);
   ScaledBackgroundHeight := ScaleDesignToForm(BackgroundPanel.Height);
 
   Bitmap.StretchPutImage(TRect.Create(0, 0, ScaledBackgroundWidth, ScaledBackgroundHeight), BackgroundImage, TDrawMode.dmSet);
@@ -158,6 +160,49 @@ begin
   BackgroundPanel.OnRedraw := @BackgroundPanelRedraw;
 end;
 
+procedure TMainForm.SetUpCursor(const ResourceName: String; const DefaultSize: Uint8; const UnscaledHotSpot: TPoint; const TargetCursorIndex: Int32);
+var
+  Stream: TStream;
+  OriginalBitmap: TBGRABitmap;
+  ResampledBitmap: TBGRABitmap;
+  IconContainer: TBGRAIconCursor;
+  CursorImage: TCursorImage;
+  UnscaledImageHeight: Int32;
+begin
+  Stream := LoadResource(ResourceName);
+  if Assigned(Stream) then
+  begin
+    // Get the OriginalBitmap.
+    OriginalBitmap := TBGRABitmap.Create(Stream);
+    Stream.Free;
+    UnscaledImageHeight := OriginalBitmap.Height;
+    // Set up the desired size.
+    ResampledBitmap := OriginalBitmap.Resample(Math.Floor(ScaleDesignToForm(DefaultSize) / OriginalBitmap.Height * OriginalBitmap.Width), ScaleDesignToForm(DefaultSize));
+    OriginalBitmap.Free;
+    Stream := TMemoryStream.Create;
+    ResampledBitmap.SaveToStreamAs(Stream, TBGRAImageFormat.ifBmp);
+    ResampledBitmap.Free;
+    // Put it into an icon container.
+    IconContainer := TBGRAIconCursor.Create(TBGRAImageFormat.ifIco);
+    Stream.Position := 0;
+    IconContainer.Add(Stream, False, False);
+    Stream.Free;
+    Stream := TMemoryStream.Create;
+    IconContainer.SaveToStream(Stream);
+    IconContainer.Free;
+    // Put the icon from the container into a cursor image.
+    CursorImage := TCursorImage.Create;
+    Stream.Position := 0;
+    CursorImage.LoadFromStream(Stream);
+    Stream.Free;
+    // Set the position where the cursor clicks.
+    CursorImage.HotSpot := TPoint.Create(Math.Floor(ScaleDesignToForm(DefaultSize) / UnscaledImageHeight * UnscaledHotSpot.X), Math.Floor(ScaleDesignToForm(DefaultSize) / UnscaledImageHeight * UnscaledHotSpot.Y));
+    // Set up the cursor to be used by the form.
+    Screen.Cursors[TargetCursorIndex] := CursorImage.ReleaseHandle;
+    CursorImage.Free;
+  end;
+end;
+
 procedure TMainForm.ShowPlayersOnline(const Count: Int32);
 begin
   if not Assigned(FormHeader.OnlinePlayersPanel) then
@@ -174,6 +219,9 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  SetUpCursor('MOUSE', 64, TPoint.Create(20, 22), 1);                
+  SetUpCursor('MOVE', 48, TPoint.Create(64, 64), 2);
+  Self.Cursor := 1;
   SetUpFonts;
   SetUpBackground;
 
@@ -245,12 +293,7 @@ begin
 end;
 
 procedure TMainForm.TspWebsiteButtonClick(Sender: TObject);
-//var
-  //Stream: TResourceStream;
 begin
-  //Stream := LoadResource('UI_PRIMARY_WINDOW_OPEN');
-  //PlaySound(PChar(Stream.Memory), 0, SND_MEMORY or SND_ASYNC);
-  //Stream.Free;
   OpenURL('https://the-starport.net/');
 end;
 

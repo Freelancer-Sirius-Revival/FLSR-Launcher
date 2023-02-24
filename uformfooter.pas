@@ -25,7 +25,6 @@ begin
   Result.Height := 96;
   Result.Top := Owner.Height - 192;
   Result.Left := Owner.Width div 2 - 192;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'MAIN_BUTTON';
   Result.ActiveImageResourceName := 'MAIN_BUTTON_SELECTED';
   Result.ShowHint := True;

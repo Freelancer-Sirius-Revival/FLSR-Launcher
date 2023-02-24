@@ -46,7 +46,6 @@ begin
   Result.Height := SystemIconButtonSize;
   Result.Top := SystemIconButtonBorderPadding;
   Result.Left := Owner.Width - Result.Width - SystemIconButtonBorderPadding;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'CLOSE';
   Result.ActiveImageResourceName := 'CLOSE_SELECTED';
   Result.ShowHint := True;
@@ -60,7 +59,6 @@ begin
   Result.Height := SystemIconButtonSize;
   Result.Top := SystemIconButtonBorderPadding;
   Result.Left := LeftOffset;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'MINIMIZE';
   Result.ActiveImageResourceName := 'MINIMIZE_SELECTED';
   Result.ShowHint := True;
@@ -74,7 +72,7 @@ begin
   Result.Height := TopBorderDragHeight;
   Result.Top := 0;
   Result.Left := 0;
-  Result.Cursor := crSize;
+  Result.Cursor := 2; // Defined in TMainForm
   Result.ShowHint := True;
   Result.Hint := 'Move window';
 end;
@@ -86,7 +84,6 @@ begin
   Result.Height := 200 div 4 * 3;
   Result.Top := BorderPadding;
   Result.Left := BorderPadding;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'TITLE3';
   Result.ShowHint := True;
   Result.Hint := 'Open Freelancer: Sirius Revival website';
@@ -99,7 +96,6 @@ begin
   Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'FLSR';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
@@ -113,7 +109,6 @@ begin
   Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'FGC';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
@@ -127,7 +122,6 @@ begin
   Result.Height := Math.Floor(CommunityIconButtonSize * 0.875);
   Result.Top := BorderPadding;
   Result.Left := LeftOffset;
-  Result.Cursor := crHandPoint;
   Result.DefaultImageResourceName := 'TSP';
   Result.ActiveImageResourceName := 'ACCOUNTS_SELECTED';
   Result.ShowHint := True;
