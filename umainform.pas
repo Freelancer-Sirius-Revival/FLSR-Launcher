@@ -51,6 +51,7 @@ type
     procedure FlgcDiscordButtonClick(Sender: TObject);
     procedure FlsrDiscordButtonClick(Sender: TObject);
     procedure TitleButtonClick(Sender: TObject);
+    procedure MainButtonClick(Sender: TObject);
     procedure SetUpFonts;
     procedure SetUpBackground;
     procedure SetUpCursor(const ResourceName: String; const DefaultSize: Uint8; const UnscaledHotSpot: TPoint; const TargetCursorIndex: Int32);
@@ -73,7 +74,7 @@ uses
   LCLIntf,
   UResourceLoading,
   UPlayersOnline,
-  URenderText,
+  UBundleDownload,
   Math,
   BGRAIconCursor;
 
@@ -219,7 +220,7 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  SetUpCursor('MOUSE', 64, TPoint.Create(20, 22), 1);                
+  SetUpCursor('MOUSE', 64, TPoint.Create(20, 22), 1);
   SetUpCursor('MOVE', 48, TPoint.Create(64, 64), 2);
   Self.Cursor := 1;
   SetUpFonts;
@@ -242,6 +243,7 @@ begin
   ListenForPlayersOnline(@ShowPlayersOnline);
 
   FormFooter := CreateFormFooter(BackgroundPanel);
+  FormFooter.MainButton.OnClick := @MainButtonClick;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -310,6 +312,11 @@ end;
 procedure TMainForm.TitleButtonClick(Sender: TObject);
 begin
   OpenURL('http://flsr.erikszeug.de');
+end;
+
+procedure TMainForm.MainButtonClick(Sender: TObject);
+begin
+  UpdateMod('');
 end;
 
 //procedure TMainForm.Button1Click(Sender: TObject);
