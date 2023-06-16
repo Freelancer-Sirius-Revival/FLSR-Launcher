@@ -46,7 +46,7 @@ var
   ChunkIndex: ValSInt;
   ChunkFileIndex: ValSInt;
 begin
-  Result.ContentVersion := High(UInt32);
+  Result.ContentVersion := High(Uint32);
   Result.BundleType := TUnknownBundle;
   Result.FilesChunks := nil;
 
@@ -54,17 +54,13 @@ begin
   Stream.Read(MagicNumbers, SizeOf(FlsrFileMagicNumbers));
   if (Length(MagicNumbers) = Length(FlsrFileMagicNumbers)) and (CompareByte(MagicNumbers, FlsrFileMagicNumbers, SizeOf(MagicNumbers)) <> 0) then
     Exit;
-
   // Version of file format.
   if Stream.ReadByte <> FlsrFileVersion then
     Exit;
-
   // Version of file contents.
   Result.ContentVersion := Stream.ReadDWord;
-
   // Bundle type.
   Result.BundleType := TBundleType(Stream.ReadByte);
-
   // Count of Chunks.
   SetLength(Result.FilesChunks, Stream.ReadWord);
 
