@@ -220,6 +220,11 @@
         <UnitName Value="UProgress"/>
       </Unit>
       <Unit>
+        <Filename Value="uplayersonline.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UPlayersOnline"/>
+      </Unit>
+      <Unit>
         <Filename Value="udatasizes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UDataSizes"/>
