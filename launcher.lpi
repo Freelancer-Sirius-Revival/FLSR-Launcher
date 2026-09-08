@@ -205,9 +205,24 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
+        <Filename Value="ubundledownload.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UBundleDownload"/>
+      </Unit>
+      <Unit>
         <Filename Value="umeta.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UMeta"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uprogress.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UProgress"/>
+      </Unit>
+      <Unit>
+        <Filename Value="udatasizes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UDataSizes"/>
       </Unit>
     </Units>
   </ProjectOptions>
