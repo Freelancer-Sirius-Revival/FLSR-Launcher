@@ -229,6 +229,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UDataSizes"/>
       </Unit>
+      <Unit>
+        <Filename Value="uinstallsteps.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UInstallSteps"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UConfig"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

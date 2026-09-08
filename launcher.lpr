@@ -1,4 +1,4 @@
-program Launcher;
+program launcher;
 
 {$mode objfpc}{$H+}
 
@@ -10,14 +10,14 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, UMainForm
-  { you can add units after this };
+  Forms,
+  UMainForm;
 
 {$R *.res}
 
 begin
   RequireDerivedFormResource := True;
-  Application.Title := 'FL:SR Launcher';
+  Application.Title := 'Freelancer: Sirius Revival – Launcher';
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
