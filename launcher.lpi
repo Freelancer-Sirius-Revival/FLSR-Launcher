@@ -204,6 +204,11 @@
         <Filename Value="LZMA.442b/compression/LZ/ULZBinTree.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="umeta.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UMeta"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
