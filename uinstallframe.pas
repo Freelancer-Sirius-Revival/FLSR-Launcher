@@ -170,6 +170,10 @@ begin
       begin
         SetUpInstallStep(TTask.DownloadMod);
         DownloadMod(BundleMeta, ValidFlsrPath.TrimRight('\').TrimRight('/').TrimRight + DirectorySeparator + DownloadTempFile, @SetInstallTaskDone, @SetInstallProgress);
+      end
+      else
+      begin
+         ProgressError.Caption := 'Unable to copy file ' + Errors.InvalidPath + 'ake sure you can read the file and write it to the FL:SR directory!';
       end;
     end;
 
@@ -188,7 +192,7 @@ begin
           TDownloadResult.NoAccess: ProgressError.Caption := 'No access to download server to fetch mod data!';
           TDownloadResult.NotFound: ProgressError.Caption := 'Mod data not found on download server!';
           TDownloadResult.DownloadFailed: ProgressError.Caption := 'Downloading mod data failed!';
-          TDownloadResult.WritingFailed: ProgressError.Caption := 'Writing mod data failed! Make sure you are allowed to write files to the FL:SR directory!';
+          TDownloadResult.WritingFailed: ProgressError.Caption := 'Writing mod data failed! Make sure you can write files to the FL:SR directory!';
           TDownloadResult.ChecksumMismatch: ProgressError.Caption := 'Downloaded file contains errors. Please re-download!';
           TDownloadResult.Success,
           TDownloadResult.Unknown: Assert(False);
@@ -200,8 +204,21 @@ begin
 
     TTask.DecodeMod:
     begin
-      MainForm.SetModInstalled;
-      MainForm.InstallFrame.Visible := False;
+      if Result then
+      begin
+        MainForm.SetModInstalled;
+        MainForm.InstallFrame.Visible := False;
+      end
+      else
+      begin              
+        ProgressError.Caption := '';
+        case Errors.DecoderErrorType of
+          TDecoderErrorType.Decoder: ProgressError.Caption := 'Decompressing file ' + Errors.DecoderErrorReason + ' failed!';
+          TDecoderErrorType.WritingOutputPath: ProgressError.Caption := 'Writing file ' + Errors.DecoderErrorReason + ' failed! Make sure you can write files to the FL:SR directory!';
+        end;
+        if ProgressError.Caption <> '' then
+          ProgressError.Visible := True;
+      end;
     end;
   end;
   ContinueButton.Enabled := True;

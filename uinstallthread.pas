@@ -12,7 +12,8 @@ uses
   Classes,
   SysUtils,
   UMeta,
-  UDownloading;
+  UDownloading,
+  UDecoding;
 
 type
   TTask = (None, DownloadMeta, VerifyFreelancerAndFlsr, CopyFreelancer, DownloadMod, DecodeMod);
@@ -24,6 +25,8 @@ type
         FlsrInvalid: Boolean;
         MissingBytes: Int64);
       TTask.CopyFreelancer: (InvalidPath: Pchar);
+      TTask.DecodeMod: (DecoderErrorType: TDecoderErrorType;
+        DecoderErrorReason: Pchar;);
   end;
   TTaskDoneCallback = procedure(const Task: TTask; const Result: Boolean; const Errors: TTaskError) of object;
   TProgressCallback = procedure(const MaxProgress, CurrentProgress: Int64) of object;
@@ -43,7 +46,6 @@ implementation
 uses
   UBundle,
   UCopyFiles,
-  UDecoding,
   UInstallSteps;
 
 type
@@ -67,7 +69,7 @@ type
 
   TDecodeData = record
     Meta: TBundleMeta;
-    BundleFileName: String;      
+    BundleFileName: String;
     TargetDirectory: String;
   end;
   PDecodeData = ^TDecodeData;
@@ -202,7 +204,7 @@ var
   ErrorOut: String;
   DecoderErrors: TDecoderErrorArray;
   FileList: TStrings;
-  BundleStream: TStream;
+  Stream: TStream;
   Bundle: TBundle;
 begin
   repeat
@@ -273,18 +275,36 @@ begin
       TTask.DecodeMod:
       begin
         Assert(Assigned(FTask.Data));
+        Errors.DecoderErrorType := TDecoderErrorType.None;
+        Errors.DecoderErrorReason := nil;
         try
           try
-            BundleStream := TFileStream.Create(PDecodeData(FTask.Data)^.BundleFileName, fmOpenRead or fmShareDenyWrite);
-            Bundle := ReadBundleMetaData(BundleStream);
+            Stream := TFileStream.Create(PDecodeData(FTask.Data)^.BundleFileName, fmOpenRead or fmShareDenyWrite);
+            Bundle := ReadBundleMetaData(Stream);
             with PDownloadModData(FTask.Data)^ do
-              DecodeFilesChunks(Bundle.FilesChunks, BundleStream, PDecodeData(FTask.Data)^.TargetDirectory, @FTaskAborted, @CreateProgressCallbackCall, DecoderErrors);
+              Result := DecodeFilesChunks(Bundle.FilesChunks, Stream, PDecodeData(FTask.Data)^.TargetDirectory, @FTaskAborted, @CreateProgressCallbackCall, DecoderErrors);
             Bundle.FilesChunks := nil;
+            if Length(DecoderErrors) > 0 then
+            begin
+              Errors.DecoderErrorType := DecoderErrors[0].ErrorType;
+              Errors.DecoderErrorReason := PChar(DecoderErrors[0].Reason.ToCharArray);
+            end;
           except
           end;
         finally
-          if Assigned(BundleStream) then
-            BundleStream.Free;
+          if Assigned(Stream) then
+            Stream.Free;
+        end;
+
+        try
+          try
+            Stream := TFileStream.Create(PDecodeData(FTask.Data)^.TargetDirectory + DirectorySeparator + 'version.flsr', fmCreate);
+            Stream.WriteBuffer(FMeta.ContentVersion, SizeOf(FMeta.ContentVersion));
+          except
+          end;
+        finally
+          if Assigned(Stream) then
+            Stream.Free;
         end;
         Dispose(PDecodeData(FTask.Data));
         {$IfOpt C+}

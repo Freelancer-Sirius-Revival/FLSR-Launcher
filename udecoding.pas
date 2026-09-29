@@ -32,6 +32,7 @@ uses
   {$ENDIF}
   SysUtils,
   Math,
+  md5,
   ULZMACommon,
   UDecoder;
 
@@ -130,8 +131,10 @@ end;
 
 procedure TDecoderThread.Execute;
 var
+  AllFilesOfChunkPresentAndValid: Boolean;
   FileEntries: TFileEntries;
   FileEntry: TFileEntry;
+  ChunkDecodedSize: Int64;
   EncodedStream: TStream;
   DecodedStream: TStream;
   OutputStream: TStream;
@@ -148,6 +151,26 @@ begin
     begin
       Terminate;
       Break;
+    end;
+
+    // The chunk contains one or more files. Check if these already exist and have the correct checksum. Hopefully this is faster than decoding them all again.
+    AllFilesOfChunkPresentAndValid := True;
+    ChunkDecodedSize := 0;
+    for FileEntry in FileEntries do
+    begin       
+      FullPath := FOutputPath + FileEntry.Path;
+      AllFilesOfChunkPresentAndValid := FileExists(FullPath) and MDMatch(MDFile(FullPath, TMDVersion.MD_VERSION_5), FileEntry.Checksum);
+      if not AllFilesOfChunkPresentAndValid then
+        Break;
+      ChunkDecodedSize += FileEntry.Size;
+    end;
+
+    // If all files of the chunk are given and valid, skip decoding.
+    if AllFilesOfChunkPresentAndValid then
+    begin
+      InterlockedExchangeAdd64(FTotalBytesDecoded, ChunkDecodedSize);        
+      EncodedStream.Free;
+      Continue;
     end;
 
     // Decode the data.
