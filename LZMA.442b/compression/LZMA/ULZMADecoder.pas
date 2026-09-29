@@ -46,7 +46,7 @@ type TLZMALenDecoder = class;
          function SetDictionarySize(const dictionarySize:integer):boolean;
          function SetLcLpPb(const lc,lp,pb:integer):boolean;
          procedure Init;
-         function Code(const inStream,outStream:TStream;outSize:int64):boolean;
+         function Code(const inStream,outStream:TStream;outSize:int64; const abort: PLongBool):boolean;
          function SetDecoderProperties(const properties:array of byte):boolean;
          property OnProgress:TLZMAProgress read FOnProgress write FOnProgress;
        end;
@@ -289,7 +289,7 @@ m_PosAlignDecoder.Init;
 m_RangeDecoder.Init;
 end;
 
-function TLZMADecoder.Code(const inStream,outStream:TStream;outSize:int64):boolean;
+function TLZMADecoder.Code(const inStream, outStream: TStream; outSize: int64; const abort: PLongBool): boolean;
 var state,rep0,rep1,rep2,rep3:integer;
     nowPos64:int64;
     prevByte:byte;
@@ -311,7 +311,7 @@ nowPos64 := 0;
 prevByte := 0;
 progint:=outsize div CodeProgressInterval;
 lpos:=progint;
-while (outSize < 0) or (nowPos64 < outSize) do begin
+while ((outSize < 0) or (nowPos64 < outSize)) and not abort^ do begin
       if (nowPos64 >=lpos) then begin
          DoProgress(LPAPos,nowPos64);
          lpos:=lpos+progint;

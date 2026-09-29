@@ -13,12 +13,13 @@ const
   MetaFileExtension = '.meta';
 
 type
-  TBundleMeta = record
+  TBundleMeta = object
     BundleType: TBundleType;
     ContentVersion: Uint32;
-    ContentChecksum: TMD5Digest;
+    BundleFileChecksum: TMD5Digest;
     BundleFileSize: Int64;
     FileEntries: TFileEntries;
+    procedure InitEmpty;
   end;
   PBundleMeta = ^TBundleMeta;
 
@@ -42,9 +43,9 @@ begin
     // Version of file contents.
     Result.ContentVersion := Stream.ReadDWord;
     // Bundle type.
-    Result.BundleType := TBundleType(Stream.ReadByte);     
-    // Bundle content checksum.
-    Stream.Read(Result.ContentChecksum, SizeOf(TMD5Digest));
+    Result.BundleType := TBundleType(Stream.ReadByte);
+    // Bundle file content checksum.
+    Stream.Read(Result.BundleFileChecksum, SizeOf(TMD5Digest));
     // Total size of the compressed bundle.
     Result.BundleFileSize := Stream.ReadQWord;
     // Count of files in this bundle.
@@ -60,6 +61,15 @@ begin
       Stream.Read(Result.FileEntries[Index].Checksum, SizeOf(TMD5Digest));
     end;
   end;
+end;
+
+procedure TBundleMeta.InitEmpty;
+begin
+  BundleType := TBundleType.TUnknownBundle;
+  ContentVersion := 0;
+  FillChar(BundleFileChecksum, SizeOf(BundleFileChecksum), 0);
+  BundleFileSize := 0;
+  FileEntries := nil;
 end;
 
 end.

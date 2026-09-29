@@ -219,9 +219,9 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="ubundledownload.pas"/>
+        <Filename Value="udownloading.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UBundleDownload"/>
+        <UnitName Value="UDownloading"/>
       </Unit>
       <Unit>
         <Filename Value="umeta.pas"/>
@@ -247,6 +247,24 @@
         <Filename Value="uconfig.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UConfig"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ucopyfiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UCopyFiles"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uinstallthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UInstallThread"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uinstallframe.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="InstallFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="UInstallFrame"/>
       </Unit>
     </Units>
   </ProjectOptions>

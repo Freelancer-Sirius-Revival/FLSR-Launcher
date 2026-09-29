@@ -32,12 +32,38 @@ type
     FilesChunks: TFilesChunks;
   end;
 
+function IsMatchingBundleVersion(const BundleStream: TStream; const ExpectedContentVersion: Uint32; const ExpectedBundleType: TBundleType): Boolean;
 function ReadBundleMetaData(const Stream: TStream): TBundle;
 
 implementation
 
 uses
   SysUtils;
+
+function IsMatchingBundleVersion(const BundleStream: TStream; const ExpectedContentVersion: Uint32; const ExpectedBundleType: TBundleType): Boolean;
+var
+  MagicNumbers: array [0..3] of Char;
+  ChunkIndex: ValSInt;
+  ChunkFileIndex: ValSInt;
+begin
+  if BundleStream.Position + SizeOf(MagicNumbers) + SizeOf(Uint8) + SizeOf(Uint32) + SizeOf(TBundleType) > BundleStream.Size then
+    Exit(False);
+  // Magic number of file format.
+  BundleStream.Read(MagicNumbers, SizeOf(FlsrFileMagicNumbers));
+  if CompareByte(MagicNumbers, FlsrFileMagicNumbers, SizeOf(MagicNumbers)) <> 0 then
+    Exit(False);
+  // Version of file format.
+  if BundleStream.ReadByte <> FlsrFileVersion then
+    Exit(False);
+  // Version of file contents.
+  if BundleStream.ReadDWord <> ExpectedContentVersion then
+    Exit(False);
+  // Bundle type.
+  if TBundleType(BundleStream.ReadByte) <> ExpectedBundleType then
+    Exit(False);
+
+  Result := True;
+end;
 
 function ReadBundleMetaData(const Stream: TStream): TBundle;
 var

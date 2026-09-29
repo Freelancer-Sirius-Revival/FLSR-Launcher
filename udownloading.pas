@@ -1,4 +1,4 @@
-unit UBundleDownload;
+unit UDownloading;
 
 {$mode ObjFPC}
 {$H+}

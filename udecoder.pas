@@ -8,14 +8,14 @@ uses
   Classes,
   ULZMACommon;
 
-function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress): Int64;
+function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress; const Abort: PLongBool): Int64;
 
 implementation
 
 uses
   ULZMADecoder;
 
-function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress): Int64;
+function Decode(const InputStream, OutputStream: TStream; const OnProgress: TLZMAProgress; const Abort: PLongBool): Int64;
 var
   Decoder: TLZMADecoder;
   Properties: array[0..4] of Byte; // From Encoder.WriteCoderProperties
@@ -36,7 +36,7 @@ begin
       v := ReadByte(InputStream);
       OutputSize := OutputSize or v shl (8 * i);
     end;
-    if Decoder.Code(InputStream, OutputStream, OutputSize) then
+    if Decoder.Code(InputStream, OutputStream, OutputSize, Abort) then
       Result := OutputSize;
   finally
     Decoder.Free;

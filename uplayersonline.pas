@@ -8,9 +8,9 @@ uses
   SysUtils;
 
 type
-  TPlayersFetchedProcedure = procedure(const PlayersOnline: Int32) of object;
+  TPlayersFetchedCallback = procedure(const PlayersOnline: Int32) of object;
 
-procedure ListenForPlayersOnline(const OnPlayersFetched: TPlayersFetchedProcedure);
+procedure ListenForPlayersOnline(const OnPlayersFetched: TPlayersFetchedCallback);
 procedure StopListeningForPlayersOnline;
 
 implementation
@@ -30,7 +30,7 @@ type
   protected
     procedure Execute; override;
   public
-    PlayersOnlineCallback: TPlayersFetchedProcedure;
+    PlayersOnlineCallback: TPlayersFetchedCallback;
   end;
 
 var
@@ -49,21 +49,23 @@ var
   Data: TStrings = nil;
   PlayerOnline: Int32;
   LastFetch: Double;
+  CurrentMoment: Double;
 begin
   LastFetch := 0;
-  FPlayersOnline := -1;
+  InterlockedExchange(FPlayersOnline, -1);
   while not Terminated do
   begin
-    if MilliSecondsBetween(LastFetch, Now) < 30000 then
+    CurrentMoment := Now;
+    if MilliSecondsBetween(LastFetch, CurrentMoment) < 30000 then
     begin
       Sleep(20); // Sleep must not be too big or closing the application may be blocked by it.
       Continue;
     end;
 
-    LastFetch := Now;
+    LastFetch := CurrentMoment;
     if Assigned(PlayersOnlineCallback) then
     begin
-      try      
+      try
         try
           Response := TMemoryStream.Create;
           TFPHttpClient.SimpleGet('http://srv.fl-sr.eu:4040/Server.ini', Response); // Throws Errors with the HTTP codes
@@ -74,11 +76,11 @@ begin
           Ini.ReadSectionValues('data', Data);
           if TryStrToInt(Data.Values['playeronline'], PlayerOnline) then
           begin
-            FPlayersOnline := PlayerOnline;
+            InterlockedExchange(FPlayersOnline, PlayerOnline);
             Queue(@CallCallback);
           end;
         except
-          FPlayersOnline := -1;
+          InterlockedExchange(FPlayersOnline, -1);
           Queue(@CallCallback);
         end;
       finally
@@ -93,7 +95,7 @@ begin
   end;
 end;
 
-procedure ListenForPlayersOnline(const OnPlayersFetched: TPlayersFetchedProcedure);
+procedure ListenForPlayersOnline(const OnPlayersFetched: TPlayersFetchedCallback);
 begin
   Thread := TPlayersOnlineThread.Create(False);
   Thread.PlayersOnlineCallback := OnPlayersFetched;

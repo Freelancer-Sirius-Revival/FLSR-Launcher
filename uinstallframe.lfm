@@ -1,0 +1,313 @@
+object InstallFrame: TInstallFrame
+  Left = 0
+  Height = 256
+  Top = 0
+  Width = 606
+  ClientHeight = 256
+  ClientWidth = 606
+  LCLVersion = '4.8.0.0'
+  TabOrder = 0
+  DesignLeft = 681
+  DesignTop = 10
+  object PathsPanel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = InstallHeadingLabel
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = MainControlsPanel
+    Cursor = crArrow
+    Left = 16
+    Height = 155
+    Top = 53
+    Width = 574
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 16
+    BorderSpacing.Top = 8
+    BorderSpacing.Right = 16
+    BevelOuter = bvNone
+    ClientHeight = 155
+    ClientWidth = 574
+    TabOrder = 0
+    Visible = False
+    object FreelancerPathLabel: TLabel
+      AnchorSideLeft.Control = FreelancerPathInput
+      AnchorSideRight.Control = FreelancerPathInput
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = FreelancerPathInput
+      Left = 0
+      Height = 18
+      Top = -2
+      Width = 506
+      Anchors = [akLeft, akRight, akBottom]
+      BorderSpacing.Bottom = 4
+      Caption = 'Path to original unmodified english Freelancer'
+    end
+    object FreelancerPathInput: TEdit
+      AnchorSideLeft.Control = PathsPanel
+      AnchorSideRight.Control = FreelancerPathButton
+      AnchorSideBottom.Side = asrBottom
+      Left = 0
+      Height = 32
+      Top = 20
+      Width = 506
+      Anchors = [akLeft, akRight]
+      BorderSpacing.Right = 8
+      TabOrder = 0
+    end
+    object FreelancerPathButton: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = FreelancerPathInput
+      AnchorSideRight.Control = PathsPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = FreelancerPathInput
+      AnchorSideBottom.Side = asrBottom
+      Cursor = crHandPoint
+      Left = 514
+      Height = 32
+      Top = 20
+      Width = 60
+      Anchors = [akTop, akRight, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 4
+      Caption = 'Select…'
+      TabOrder = 1
+      OnClick = FreelancerPathButtonClick
+    end
+    object FreelancerPathError: TLabel
+      AnchorSideLeft.Control = FreelancerPathInput
+      AnchorSideTop.Control = FreelancerPathInput
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = FreelancerPathButton
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 18
+      Top = 52
+      Width = 574
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Freelancer Path Error'
+      Font.Color = clRed
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      Visible = False
+    end
+    object FlsrPathLabel: TLabel
+      AnchorSideLeft.Control = FlsrPathInput
+      AnchorSideRight.Control = FlsrPathInput
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = FlsrPathInput
+      Left = 0
+      Height = 18
+      Top = 74
+      Width = 506
+      Anchors = [akLeft, akRight, akBottom]
+      BorderSpacing.Bottom = 4
+      Caption = 'Path to target FL:SR directory'
+    end
+    object FlsrPathInput: TEdit
+      AnchorSideLeft.Control = PathsPanel
+      AnchorSideRight.Control = FlsrPathButton
+      AnchorSideBottom.Side = asrBottom
+      Left = 0
+      Height = 32
+      Top = 96
+      Width = 506
+      Anchors = [akLeft, akRight]
+      BorderSpacing.Right = 8
+      TabOrder = 2
+    end
+    object FlsrPathButton: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = FlsrPathInput
+      AnchorSideRight.Control = PathsPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = FlsrPathInput
+      AnchorSideBottom.Side = asrBottom
+      Cursor = crHandPoint
+      Left = 514
+      Height = 32
+      Top = 96
+      Width = 60
+      Anchors = [akTop, akRight, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 4
+      Caption = 'Select…'
+      TabOrder = 3
+      OnClick = FlsrPathButtonClick
+    end
+    object FlsrPathError: TLabel
+      AnchorSideLeft.Control = FlsrPathInput
+      AnchorSideTop.Control = FlsrPathInput
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = FlsrPathButton
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 18
+      Top = 128
+      Width = 574
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'FL:SR Path Error'
+      Font.Color = clRed
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      Visible = False
+    end
+  end
+  object ProgressPanel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = InstallHeadingLabel
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = MainControlsPanel
+    Cursor = crArrow
+    Left = 16
+    Height = 147
+    Top = 53
+    Width = 574
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 16
+    BorderSpacing.Top = 8
+    BorderSpacing.Right = 16
+    BorderSpacing.Bottom = 8
+    BevelOuter = bvNone
+    ClientHeight = 147
+    ClientWidth = 574
+    TabOrder = 1
+    Visible = False
+    object ProgressStepLabel: TLabel
+      AnchorSideLeft.Control = ProgressBar
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = ProgressBar
+      Left = 237
+      Height = 18
+      Top = 14
+      Width = 100
+      Anchors = [akLeft, akBottom]
+      Caption = 'Installation Step'
+    end
+    object ProgressBar: TProgressBar
+      AnchorSideLeft.Control = ProgressPanel
+      AnchorSideRight.Control = ProgressPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 16
+      Height = 20
+      Top = 32
+      Width = 542
+      Anchors = [akLeft, akRight]
+      BorderSpacing.Left = 16
+      BorderSpacing.Right = 16
+      Max = 1000
+      Smooth = True
+      TabOrder = 0
+    end
+    object ProgressLabel: TLabel
+      AnchorSideLeft.Control = ProgressBar
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Control = ProgressBar
+      AnchorSideTop.Side = asrBottom
+      AnchorSideBottom.Side = asrBottom
+      Left = 278
+      Height = 18
+      Top = 52
+      Width = 19
+      Caption = '0%'
+    end
+    object ProgressError: TLabel
+      AnchorSideLeft.Control = ProgressBar
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Control = ProgressLabel
+      AnchorSideTop.Side = asrBottom
+      AnchorSideBottom.Side = asrBottom
+      Left = 243
+      Height = 18
+      Top = 70
+      Width = 89
+      Caption = 'ProgressError'
+      Font.Color = clRed
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+    end
+  end
+  object MainControlsPanel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 16
+    Height = 32
+    Top = 208
+    Width = 574
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Left = 16
+    BorderSpacing.Right = 16
+    BorderSpacing.Bottom = 16
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 574
+    TabOrder = 2
+    object CancelButton: TButton
+      AnchorSideLeft.Control = MainControlsPanel
+      AnchorSideBottom.Control = MainControlsPanel
+      AnchorSideBottom.Side = asrBottom
+      Cursor = crHandPoint
+      Left = 0
+      Height = 28
+      Top = 4
+      Width = 57
+      Anchors = [akLeft, akBottom]
+      AutoSize = True
+      Caption = 'Cancel'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnClick = CancelButtonClick
+    end
+    object ContinueButton: TButton
+      AnchorSideRight.Control = MainControlsPanel
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = MainControlsPanel
+      AnchorSideBottom.Side = asrBottom
+      Cursor = crHandPoint
+      Left = 519
+      Height = 28
+      Top = 4
+      Width = 55
+      Anchors = [akRight, akBottom]
+      AutoSize = True
+      Caption = 'Install'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = ContinueButtonClick
+    end
+  end
+  object InstallHeadingLabel: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Control = Owner
+    Left = 140
+    Height = 45
+    Top = 0
+    Width = 326
+    Caption = 'Preparing Installation'
+    Font.Height = -32
+    ParentFont = False
+  end
+  object FreelancerPathDialog: TSelectDirectoryDialog
+    Title = 'Select Original Freelancer directory'
+    Options = [ofReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofDontAddToRecent]
+    Left = 168
+    Top = 160
+  end
+  object FlsrPathDialog: TSelectDirectoryDialog
+    Title = 'Select Target FL:SR Directory'
+    Left = 40
+    Top = 160
+  end
+end

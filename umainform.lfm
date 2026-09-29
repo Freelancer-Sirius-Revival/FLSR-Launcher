@@ -1,10 +1,10 @@
 object MainForm: TMainForm
   Left = 684
-  Height = 425
+  Height = 447
   Top = 250
   Width = 716
-  Caption = 'Freelancer: Sirius Revival – Mod Launcher'
-  ClientHeight = 425
+  Caption = 'Freelancer: Sirius Revival – Launcher'
+  ClientHeight = 447
   ClientWidth = 716
   Icon.Data = {
     5E270100000001000500808000000100180028C8000056000000404000000100
@@ -2372,10 +2372,10 @@ object MainForm: TMainForm
     ADAD0000AFAE0000CDFD0000EEF9000044420000AFFF0000C9DB000007070000
     0000
   }
+  Position = poDefaultPosOnly
+  LCLVersion = '4.8.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  Position = poDefaultPosOnly
-  LCLVersion = '3.4.0.0'
   object LogoImage: TImage
     Cursor = crHandPoint
     Left = 0
@@ -2383,7 +2383,6 @@ object MainForm: TMainForm
     Hint = 'Open FL:SR Website'
     Top = 0
     Width = 376
-    OnClick = LogoImageClick
     ParentShowHint = False
     Picture.Data = {
       1754506F727461626C654E6574776F726B47726170686963769B040089504E47
@@ -11827,6 +11826,7 @@ object MainForm: TMainForm
     Proportional = True
     ShowHint = True
     Transparent = True
+    OnClick = LogoImageClick
   end
   object DiscordButton: TBitBtn
     Cursor = crHandPoint
@@ -20031,10 +20031,10 @@ object MainForm: TMainForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000
     }
-    OnClick = DiscordButtonClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
+    OnClick = DiscordButtonClick
   end
   object ServerStatusLabel: TLabel
     Left = 387
@@ -20043,15 +20043,16 @@ object MainForm: TMainForm
     Width = 145
     Caption = 'Fetching server status…'
   end
-  object InstallButton: TSpeedButton
+  object MainButton: TSpeedButton
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
-    Left = 174
-    Height = 92
-    Top = 301
-    Width = 369
+    Cursor = crHandPoint
+    Left = 171
+    Height = 98
+    Top = 317
+    Width = 375
     Anchors = [akLeft, akBottom]
     AutoSize = True
     BorderSpacing.Bottom = 32
@@ -24075,154 +24076,136 @@ object MainForm: TMainForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000
     }
-    OnClick = InstallButtonClick
-    OnPaint = InstallButtonPaint
+    Visible = False
+    OnClick = MainButtonClick
+    OnPaint = MainButtonPaint
   end
-  object ProgressPanel: TPanel
+  object FetchingDataInfoLabel: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 209
-    Top = 216
+    Height = 30
+    Top = 353
+    Width = 716
+    Alignment = taCenter
+    Anchors = [akLeft, akRight, akBottom]
+    BorderSpacing.Bottom = 64
+    Caption = 'Fetching Mod Information…'
+    Font.Height = -21
+    Font.Style = [fsBold]
+    ParentFont = False
+    Visible = False
+  end
+  inline InstallFrame: TInstallFrame
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Height = 304
+    Top = 143
     Width = 716
     Anchors = [akLeft, akRight, akBottom]
-    BevelOuter = bvNone
-    ClientHeight = 209
+    ClientHeight = 304
     ClientWidth = 716
     TabOrder = 1
     Visible = False
-    object ProgressHeadingLabel: TLabel
-      AnchorSideLeft.Control = ProgressPanel
-      AnchorSideLeft.Side = asrCenter
-      AnchorSideTop.Control = ProgressPanel
-      Left = 254
-      Height = 45
-      Top = 0
-      Width = 208
-      Caption = 'Progress Step'
-      Font.Height = -32
-      ParentFont = False
-    end
-    object ProgressInstructionsLabel: TLabel
-      AnchorSideLeft.Control = ProgressPanel
-      AnchorSideTop.Control = ProgressHeadingLabel
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = ProgressPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProgressInputEdit
-      Left = 16
-      Height = 28
-      Top = 53
+    inherited PathsPanel: TPanel
+      AnchorSideLeft.Control = InstallFrame
+      AnchorSideRight.Control = InstallFrame
+      Cursor = crDefault
+      Height = 203
       Width = 684
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Left = 16
-      BorderSpacing.Top = 8
-      BorderSpacing.Right = 16
-      BorderSpacing.Bottom = 8
-      Caption = 'Progress Instructions'
-      WordWrap = True
-    end
-    object ProgressInputEdit: TEdit
-      AnchorSideLeft.Control = ProgressPanel
-      AnchorSideRight.Control = ProgressInputButton
-      AnchorSideBottom.Control = ProgressPanel
-      AnchorSideBottom.Side = asrBottom
-      Left = 16
-      Height = 32
-      Top = 89
-      Width = 616
-      Anchors = [akLeft, akRight, akBottom]
-      BorderSpacing.Left = 16
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 88
-      TabOrder = 0
-      Text = 'ProgressInputEdit'
-      TextHint = 'Path to directory'
-    end
-    object ProgressInputButton: TButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = ProgressInputEdit
-      AnchorSideRight.Control = ProgressPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProgressInputEdit
-      AnchorSideBottom.Side = asrBottom
-      Left = 640
-      Height = 32
-      Top = 89
-      Width = 60
-      Anchors = [akTop, akRight, akBottom]
-      AutoSize = True
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 16
-      Caption = 'Select…'
+      ClientHeight = 203
+      ClientWidth = 684
       TabOrder = 1
-      OnClick = ProgressInputButtonClick
+      inherited FreelancerPathLabel: TLabel
+        Top = 28
+        Width = 616
+      end
+      inherited FreelancerPathInput: TEdit
+        Top = 50
+        Width = 616
+      end
+      inherited FreelancerPathButton: TButton
+        Left = 624
+        Top = 50
+      end
+      inherited FreelancerPathError: TLabel
+        Top = 82
+        Width = 684
+      end
+      inherited FlsrPathLabel: TLabel
+        Top = 117
+        Width = 616
+      end
+      inherited FlsrPathInput: TEdit
+        Top = 139
+        Width = 616
+      end
+      inherited FlsrPathButton: TButton
+        Left = 624
+        Top = 139
+      end
+      inherited FlsrPathError: TLabel
+        Top = 171
+        Width = 684
+      end
     end
-    object ProgressCancelInstallButton: TButton
-      AnchorSideLeft.Control = ProgressPanel
-      AnchorSideBottom.Control = ProgressPanel
+    inherited ProgressPanel: TPanel
+      AnchorSideLeft.Control = InstallFrame
+      AnchorSideTop.Control = nil
+      AnchorSideTop.Side = asrTop
+      AnchorSideRight.Control = InstallFrame
+      AnchorSideBottom.Control = InstallFrame
       AnchorSideBottom.Side = asrBottom
-      Left = 16
-      Height = 28
-      Top = 165
-      Width = 54
-      Anchors = [akLeft, akBottom]
-      AutoSize = True
-      BorderSpacing.Left = 16
-      BorderSpacing.Bottom = 16
-      Caption = 'Cancel'
-      TabOrder = 2
-      OnClick = ProgressCancelInstallButtonClick
-    end
-    object ProgressContinueButton: TButton
-      AnchorSideRight.Control = ProgressPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProgressPanel
-      AnchorSideBottom.Side = asrBottom
-      Left = 630
-      Height = 28
-      Top = 165
-      Width = 70
-      Anchors = [akRight, akBottom]
-      AutoSize = True
-      BorderSpacing.Right = 16
-      BorderSpacing.Bottom = 16
-      Caption = 'Continue'
-      TabOrder = 3
-      OnClick = ProgressContinueButtonClick
-    end
-    object ProgressErrorLabel: TLabel
-      AnchorSideLeft.Control = ProgressPanel
-      AnchorSideRight.Control = ProgressPanel
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = ProgressPanel
-      AnchorSideBottom.Side = asrBottom
-      Left = 16
-      Height = 18
-      Top = 127
+      Cursor = crDefault
+      Height = 241
+      Top = 55
       Width = 684
-      Anchors = [akLeft, akRight, akBottom]
-      BorderSpacing.Left = 16
-      BorderSpacing.Right = 16
-      BorderSpacing.Bottom = 64
-      Caption = 'Progress Error'
-      Visible = False
-      WordWrap = True
+      ClientHeight = 241
+      ClientWidth = 684
+      TabOrder = 0
+      inherited ProgressStepLabel: TLabel
+        Left = 292
+        Top = 75
+      end
+      inherited ProgressBar: TProgressBar
+        AnchorSideTop.Side = asrCenter
+        AnchorSideBottom.Side = asrCenter
+        Top = 93
+        Width = 652
+      end
+      inherited ProgressLabel: TLabel
+        Left = 333
+        Top = 113
+      end
+      inherited ProgressError: TLabel
+        Left = 298
+        Top = 131
+      end
     end
-  end
-  object SelectVanillaFLDirectoryDialog: TSelectDirectoryDialog
-    Title = 'Select Original Freelancer directory'
-    FileName = '/home/eroe/Arbeit/FreePascal/fpcupdeluxe/lazarus/test/customdrawn'
-    Options = [ofReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofDontAddToRecent]
-    Left = 368
-    Top = 168
-  end
-  object SelectFLSRTargetDirectoryDialog: TSelectDirectoryDialog
-    Title = 'Select Target FL:SR Directory'
-    Left = 88
-    Top = 184
+    inherited MainControlsPanel: TPanel
+      AnchorSideLeft.Control = InstallFrame
+      AnchorSideRight.Control = InstallFrame
+      AnchorSideBottom.Control = InstallFrame
+      Top = 256
+      Width = 684
+      ClientWidth = 684
+      inherited ContinueButton: TButton
+        Left = 629
+      end
+    end
+    inherited InstallHeadingLabel: TLabel
+      AnchorSideLeft.Control = InstallFrame
+      AnchorSideTop.Control = InstallFrame
+      Left = 195
+    end
+    inherited FreelancerPathDialog: TSelectDirectoryDialog
+      Title = 'Select Original Freelancer Directory'
+    end
   end
 end
