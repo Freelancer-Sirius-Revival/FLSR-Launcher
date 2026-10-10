@@ -299,15 +299,19 @@ begin
             Stream.Free;
         end;
 
-        try
+        if Result then
+        begin
+          DeleteFile(PDecodeData(FTask.Data)^.BundleFileName);
           try
-            Stream := TFileStream.Create(PDecodeData(FTask.Data)^.TargetDirectory + DirectorySeparator + FlsrVersionFileName, fmCreate);
-            Stream.WriteBuffer(FMeta.ContentVersion, SizeOf(TBundleMeta.ContentVersion));
-          except
+            try
+              Stream := TFileStream.Create(PDecodeData(FTask.Data)^.TargetDirectory + DirectorySeparator + FlsrVersionFileName, fmCreate);
+              Stream.WriteBuffer(FMeta.ContentVersion, SizeOf(TBundleMeta.ContentVersion));
+            except
+            end;
+          finally
+            if Assigned(Stream) then
+              Stream.Free;
           end;
-        finally
-          if Assigned(Stream) then
-            Stream.Free;
         end;
         Dispose(PDecodeData(FTask.Data));
         {$IfOpt C+}
