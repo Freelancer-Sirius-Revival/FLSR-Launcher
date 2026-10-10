@@ -6,9 +6,6 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
-  {$IFDEF HASAMIGA}
-  athreads,
-  {$ENDIF}
   sysutils,
   Interfaces, // this includes the LCL widgetset
   Forms,
@@ -28,7 +25,8 @@ begin
   Result := 'launcher'
 end;
 
-begin  
+begin
+  Randomize;
   OnGetVendorName := @GetVendorName;
   OnGetApplicationName := @GetApplicationName;
   RequireDerivedFormResource := True;

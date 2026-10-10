@@ -15,14 +15,14 @@ uses
   StdCtrls,
   ComCtrls,
   UInstallThread,
-  UInstallFrame,
-  UMeta;
+  UInstallFrame;
 
 type
+  TModStatus = (NotInstalled, Installed, Outdated);
+
   TMainForm = class(TForm)
   published
     DiscordButton: TBitBtn;
-    FetchingDataInfoLabel: TLabel;
     ProgressPanel: TPanel;
     ServerStatusLabel: TLabel;
     LogoImage: TImage;
@@ -34,15 +34,11 @@ type
     procedure MainButtonPaint(Sender: TObject);
     procedure DiscordButtonClick(Sender: TObject);
     procedure LogoImageClick(Sender: TObject);
-  public
-    procedure SetModInstalled;
   private
-    FModInstalled: Boolean;
-    FModMeta: TBundleMeta;
-    procedure SetInstallTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
+    FModStatus: TModStatus;
     procedure ShowPlayersOnline(const Count: Int32);
   public
-
+    procedure SetModStatus(const ModStatus: TModStatus);
   end;
 
 var
@@ -55,7 +51,8 @@ uses
   FileUtil,
   DateUtils,
   UPlayersOnline,
-  UDownloading;
+  UDownloading,
+  USettings;
 
   {$R *.lfm}
 
@@ -71,18 +68,32 @@ begin
   TextStyle.Layout := tlCenter;
   MainButton.Canvas.Font.Size := 28;
   MainButton.Canvas.Font.Color := clWhite;
-  if FModInstalled then
-    ButtonText := 'Launch Game'
-  else
-    ButtonText := 'Install';
+  case FModStatus of
+    TModStatus.NotInstalled: ButtonText := 'Install';
+    TModStatus.Installed: ButtonText := 'Launch';
+    TModStatus.Outdated: ButtonText := 'Update';
+  end;
   MainButton.Canvas.TextRect(Area, 0, 0, ButtonText, TextStyle);
 end;
 
 procedure TMainForm.MainButtonClick(Sender: TObject);
-begin
-  InstallFrame.Visible := True;
-  MainButton.Visible := False;
-  InstallFrame.SetUp;
+begin                      
+  MainButton.Enabled := False;
+  case FModStatus of
+    TModStatus.NotInstalled:
+    begin
+      InstallFrame.BeginInstallWorkflow;       
+      MainButton.Visible := False;
+      InstallFrame.Visible := True;
+    end;
+    TModStatus.Installed: ;
+    TModStatus.Outdated:
+    begin
+      InstallFrame.BeginInstallWorkflow;
+      MainButton.Visible := False;
+      InstallFrame.Visible := True;
+    end;
+  end;
 end;
 
 procedure TMainForm.LogoImageClick(Sender: TObject);
@@ -90,10 +101,12 @@ begin
   OpenURL('http://fl-sr.eu');
 end;
 
-procedure TMainForm.SetModInstalled;
+procedure TMainForm.SetModStatus(const ModStatus: TModStatus);
 begin
-  FModInstalled := True;
+  FModStatus := ModStatus;
+  MainButton.Enabled := True;
   MainButton.Visible := True;
+  InstallFrame.Visible := False;
 end;
 
 procedure TMainForm.DiscordButtonClick(Sender: TObject);
@@ -115,41 +128,14 @@ begin
     ServerStatusLabel.Caption := Count.ToString + ' freelancers playing.';
 end;
 
-procedure TMainForm.SetInstallTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
-begin
-  case Task of
-    TTask.DownloadMeta:
-    begin
-      if Result and GetBundleMeta(FModMeta) then
-      begin
-        FetchingDataInfoLabel.Visible := False;
-        MainButton.Visible := True;
-      end
-      else
-      begin
-        FModMeta.InitEmpty;
-        FetchingDataInfoLabel.Caption := '';
-        case Errors.DownloadResult of
-          TDownloadResult.NoAccess: FetchingDataInfoLabel.Caption := 'No access to download server to fetch mod information!';
-          TDownloadResult.NotFound: FetchingDataInfoLabel.Caption := 'Mod information not found on download server!';
-          TDownloadResult.DownloadFailed: FetchingDataInfoLabel.Caption := 'Downloading mod information failed!';
-        end;
-        if FetchingDataInfoLabel.Caption <> '' then
-          FetchingDataInfoLabel.Visible := True;
-      end;
-    end;
-  end;
-end;
-
 procedure TMainForm.FormCreate(Sender: TObject);
-begin
-  FModInstalled := False;
-  FModMeta.InitEmpty;
+begin                
+  ReadSettings;
+  FModStatus := NotInstalled;
   ListenForPlayersOnline(@ShowPlayersOnline);
   CreateInstallThread;
-  FetchingDataInfoLabel.Caption := 'Fetching Mod Information…';
-  FetchingDataInfoLabel.Visible := True;
-  DownloadMeta(@SetInstallTaskDone, nil);
+  InstallFrame.BeginUpdateWorkflow;
+  InstallFrame.Visible := True;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);

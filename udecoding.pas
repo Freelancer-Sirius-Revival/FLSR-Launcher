@@ -136,8 +136,8 @@ var
   FileEntry: TFileEntry;
   ChunkDecodedSize: Int64;
   EncodedStream: TStream;
-  DecodedStream: TStream;
-  OutputStream: TStream;
+  DecodedStream: TMemoryStream;
+  OutputStream: TFileStream;
   FileMode: Uint16;
   FullPath: String;
 begin
@@ -212,7 +212,8 @@ begin
           Break;
         end;
       finally
-        OutputStream.Free;
+        if Assigned(OutputStream) then
+          OutputStream.Free;
       end;
     end;
     DecodedStream.Free;

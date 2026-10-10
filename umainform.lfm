@@ -24080,25 +24080,6 @@ object MainForm: TMainForm
     OnClick = MainButtonClick
     OnPaint = MainButtonPaint
   end
-  object FetchingDataInfoLabel: TLabel
-    AnchorSideLeft.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 30
-    Top = 353
-    Width = 716
-    Alignment = taCenter
-    Anchors = [akLeft, akRight, akBottom]
-    BorderSpacing.Bottom = 64
-    Caption = 'Fetching Mod Information…'
-    Font.Height = -21
-    Font.Style = [fsBold]
-    ParentFont = False
-    Visible = False
-  end
   inline InstallFrame: TInstallFrame
     AnchorSideLeft.Control = Owner
     AnchorSideRight.Control = Owner
@@ -24157,35 +24138,35 @@ object MainForm: TMainForm
     end
     inherited ProgressPanel: TPanel
       AnchorSideLeft.Control = InstallFrame
-      AnchorSideTop.Control = nil
+      AnchorSideTop.Control = InstallFrame
       AnchorSideTop.Side = asrTop
       AnchorSideRight.Control = InstallFrame
       AnchorSideBottom.Control = InstallFrame
       AnchorSideBottom.Side = asrBottom
       Cursor = crDefault
-      Height = 241
-      Top = 55
+      Height = 288
+      Top = 8
       Width = 684
-      ClientHeight = 241
+      ClientHeight = 288
       ClientWidth = 684
       TabOrder = 0
       inherited ProgressStepLabel: TLabel
         Left = 292
-        Top = 75
+        Top = 95
       end
       inherited ProgressBar: TProgressBar
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Side = asrCenter
-        Top = 93
+        Top = 113
         Width = 652
       end
       inherited ProgressLabel: TLabel
         Left = 333
-        Top = 113
+        Top = 133
       end
       inherited ProgressError: TLabel
         Left = 298
-        Top = 131
+        Top = 151
       end
     end
     inherited MainControlsPanel: TPanel

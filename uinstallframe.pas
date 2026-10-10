@@ -50,15 +50,17 @@ type
     procedure FlsrPathButtonClick(Sender: TObject);
   private
     FLastProgressUpdate: Double;
-    ValidFreelancerPath: String;
-    ValidFlsrPath: String;
-    BundleMeta: TBundleMeta;
+    FLastBundleMeta: TBundleMeta;
+    procedure DisplayDownloadMetaErrors(const Errors: TTaskError);
+    procedure SetBundleMeta(const Meta: TBundleMeta);
+    procedure SetUpInstallStep(const Task: TTask);
+    procedure SetUpdateTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
     procedure SetInstallTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
     procedure SetInstallProgress(const MaxProgress, CurrentProgress: Int64);
-    procedure SetUpInstallStep(const FinishedTask: TTask);
   public
     constructor Create(TheOwner: TComponent); override;
-    procedure SetUp;
+    procedure BeginInstallWorkflow;
+    procedure BeginUpdateWorkflow;
   end;
 
 implementation
@@ -69,6 +71,7 @@ uses
   FileUtil,
   DateUtils,
   Math,
+  USettings,
   UDecoding,
   UDownloading;
 
@@ -77,8 +80,6 @@ uses
 procedure TInstallFrame.CancelButtonClick(Sender: TObject);
 begin
   MainForm.InstallFrame.Visible := False;
-  //InstallButton.Visible := True;
-  //ProgressPanel.Visible := False;
 end;
 
 procedure TInstallFrame.ContinueButtonClick(Sender: TObject);
@@ -87,7 +88,7 @@ begin
   FreelancerPathError.Visible := False;
   FlsrPathError.Visible := False;
   PathsPanel.Enabled := False;
-  VerifyFreelancerAndFlsr(FreelancerPathInput.Text, FlsrPathInput.Text, @SetInstallTaskDone, @SetInstallProgress);
+  VerifyFreelancerAndFlsrPath(FreelancerPathInput.Text, FlsrPathInput.Text, FLastBundleMeta, @SetInstallTaskDone, @SetInstallProgress);
 end;
 
 procedure TInstallFrame.FreelancerPathButtonClick(Sender: TObject);
@@ -110,40 +111,91 @@ begin
     FlsrPathInput.Text := FlsrPathDialog.FileName;
 end;
 
-procedure TInstallFrame.SetInstallTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
-const
-  DownloadTempFile: String = 'flsr.temp';
+procedure TInstallFrame.SetBundleMeta(const Meta: TBundleMeta);
+begin
+  FLastBundleMeta := Meta;
+end;
+
+procedure TInstallFrame.DisplayDownloadMetaErrors(const Errors: TTaskError);
+begin
+  ProgressError.Caption := '';
+  case Errors.DownloadResult of
+    TDownloadResult.Aborted: ProgressError.Caption := '';
+    TDownloadResult.NoAccess: ProgressError.Caption := 'No access to download server to fetch mod information!';
+    TDownloadResult.NotFound: ProgressError.Caption := 'Mod information not found on download server!';
+    TDownloadResult.DownloadFailed: ProgressError.Caption := 'Downloading mod information failed!';
+    TDownloadResult.WritingFailed,
+    TDownloadResult.Success,
+    TDownloadResult.Unknown: Assert(False);
+  end;
+  if ProgressError.Caption <> '' then
+    ProgressError.Visible := True;
+end;
+
+procedure TInstallFrame.SetUpdateTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
 begin
   case Task of
     TTask.DownloadMeta:
     begin
-      if Result and GetBundleMeta(BundleMeta) then
-        SetUpInstallStep(TTask.VerifyFreelancerAndFlsr)
+      if Result then
+      begin
+        SetUpInstallStep(TTask.VerifyFlsrInstallation);
+        VerifyFlsrInstallation(GetSettings.LivePath, FLastBundleMeta, @SetUpdateTaskDone, @SetInstallProgress);
+      end
+      else
+        DisplayDownloadMetaErrors(Errors);
+    end;
+
+    TTask.VerifyFlsrInstallation:
+    begin
+      if Result then
+      begin
+        MainForm.SetModStatus(TModStatus.Installed);
+        SetUpInstallStep(TTask.None);
+      end
       else
       begin
         ProgressError.Caption := '';
-        case Errors.DownloadResult of
-          TDownloadResult.Aborted: ProgressError.Caption := '';
-          TDownloadResult.NoAccess: ProgressError.Caption := 'No access to download server to fetch mod information!';
-          TDownloadResult.NotFound: ProgressError.Caption := 'Mod information not found on download server!';
-          TDownloadResult.DownloadFailed: ProgressError.Caption := 'Downloading mod information failed!';
-          TDownloadResult.WritingFailed,
-          TDownloadResult.Success,
-          TDownloadResult.Unknown: Assert(False);
+        if Errors.NoVersionFile then
+        begin
+          ProgressError.Caption := 'The mod is not installed at ' + GetSettings.LivePath;
+          MainForm.SetModStatus(TModStatus.NotInstalled);
+        end
+        else if Errors.WrongVersion then
+        begin
+          ProgressError.Caption := 'The mod needs an update!';
+          MainForm.SetModStatus(TModStatus.Outdated);
         end;
         if ProgressError.Caption <> '' then
           ProgressError.Visible := True;
       end;
     end;
+  end;
+end;
 
-    TTask.VerifyFreelancerAndFlsr:
+procedure TInstallFrame.SetInstallTaskDone(const Task: TTask; const Result: Boolean; const Errors: TTaskError);
+const
+  DownloadTempFile: String = 'flsr.temp';
+var
+  ValidFreelancerPath: String;
+begin
+  case Task of
+    TTask.DownloadMeta:
+    begin
+      if Result then
+        SetUpInstallStep(TTask.VerifyFreelancerAndFlsrPath)
+      else
+        DisplayDownloadMetaErrors(Errors);
+    end;
+
+    TTask.VerifyFreelancerAndFlsrPath:
     begin
       if Result then
       begin
         ValidFreelancerPath := FreelancerPathInput.Text;
-        ValidFlsrPath := FlsrPathInput.Text;
+        WriteFlsrPathToConfig(FlsrPathInput.Text);
         SetUpInstallStep(TTask.CopyFreelancer);
-        CopyFreelancer(ValidFreelancerPath, ValidFlsrPath, @SetInstallTaskDone, @SetInstallProgress);
+        CopyFreelancer(ValidFreelancerPath, GetSettings.LivePath, FLastBundleMeta, @SetInstallTaskDone, @SetInstallProgress);
       end
       else
       begin
@@ -151,7 +203,7 @@ begin
         FlsrPathError.Caption := '';
         if Errors.FreelancerInvalid then
           FreelancerPathError.Caption := 'Invalid installation. Make sure it contains an unmodified Freelancer installation!';
-        if Errors.FlsrInvalid then
+        if Errors.FlsrPathInvalid then
           FlsrPathError.Caption := 'Cannot write data. Make sure you are allowed to write files there, or chose another location!'
         else if Errors.MissingBytes > 0 then
           FlsrPathError.Caption := 'You need more space on your drive! Required space: ' + IntToStr(Math.Ceil(Errors.MissingBytes / (1024 * 1024 * 1024))) + ' GiBytes';
@@ -170,12 +222,10 @@ begin
       if Result then
       begin
         SetUpInstallStep(TTask.DownloadMod);
-        DownloadMod(BundleMeta, ValidFlsrPath.TrimRight('\').TrimRight('/').TrimRight + DirectorySeparator + DownloadTempFile, @SetInstallTaskDone, @SetInstallProgress);
+        DownloadMod(FLastBundleMeta, GetSettings.LivePath.TrimRight('\').TrimRight('/').Trim + DirectorySeparator + DownloadTempFile, @SetInstallTaskDone, @SetInstallProgress);
       end
       else
-      begin
-         ProgressError.Caption := 'Unable to copy file ' + Errors.InvalidPath + 'ake sure you can read the file and write it to the FL:SR directory!';
-      end;
+        ProgressError.Caption := 'Unable to copy file ' + Errors.InvalidPath + 'ake sure you can read the file and write it to the FL:SR directory!';
     end;
 
     TTask.DownloadMod:
@@ -183,7 +233,7 @@ begin
       if Result then
       begin
         SetUpInstallStep(TTask.DecodeMod);
-        DecodeMod(BundleMeta, ValidFlsrPath.TrimRight('\').TrimRight('/').TrimRight + DirectorySeparator + DownloadTempFile, ValidFlsrPath.TrimRight('\').TrimRight('/').TrimRight, @SetInstallTaskDone, @SetInstallProgress);
+        DecodeMod(FLastBundleMeta, GetSettings.LivePath.TrimRight('\').TrimRight('/').Trim + DirectorySeparator + DownloadTempFile, GetSettings.LivePath.TrimRight('\').TrimRight('/').Trim, @SetInstallTaskDone, @SetInstallProgress);
       end
       else
       begin
@@ -192,8 +242,8 @@ begin
           TDownloadResult.Aborted: ProgressError.Caption := '';
           TDownloadResult.NoAccess: ProgressError.Caption := 'No access to download server to fetch mod data!';
           TDownloadResult.NotFound: ProgressError.Caption := 'Mod data not found on download server!';
-          TDownloadResult.DownloadFailed: ProgressError.Caption := 'Downloading mod data failed!';
-          TDownloadResult.WritingFailed: ProgressError.Caption := 'Writing mod data failed! Make sure you can write files to the FL:SR directory!';
+          TDownloadResult.DownloadFailed: ProgressError.Caption := 'Downloading mod contents failed!';
+          TDownloadResult.WritingFailed: ProgressError.Caption := 'Writing mod contents failed! Make sure you can write files to the FL:SR directory!';
           TDownloadResult.ChecksumMismatch: ProgressError.Caption := 'Downloaded file contains errors. Please re-download!';
           TDownloadResult.Success,
           TDownloadResult.Unknown: Assert(False);
@@ -207,11 +257,11 @@ begin
     begin
       if Result then
       begin
-        MainForm.SetModInstalled;
-        MainForm.InstallFrame.Visible := False;
+        MainForm.SetModStatus(TModStatus.Installed);
+        SetUpInstallStep(TTask.None);
       end
       else
-      begin              
+      begin
         ProgressError.Caption := '';
         case Errors.DecoderErrorType of
           TDecoderErrorType.Decoder: ProgressError.Caption := 'Decompressing file ' + Errors.DecoderErrorReason + ' failed!';
@@ -222,7 +272,6 @@ begin
       end;
     end;
   end;
-  ContinueButton.Enabled := True;
 end;
 
 procedure TInstallFrame.SetInstallProgress(const MaxProgress, CurrentProgress: Int64);
@@ -242,28 +291,45 @@ begin
   end;
 end;
 
-procedure TInstallFrame.SetUpInstallStep(const FinishedTask: TTask);
+procedure TInstallFrame.SetUpInstallStep(const Task: TTask);
 begin
-  case FinishedTask of
+  ProgressError.Visible := False;
+  ProgressError.Caption := '';
+  ProgressLabel.Caption := '0%';
+  ProgressBar.Position := 0;
+
+  case Task of
     TTask.None:
     begin
+      ContinueButton.Enabled := False;
       PathsPanel.Visible := False;
       ProgressPanel.Visible := False;
     end;
 
     TTask.DownloadMeta:
     begin
-      InstallHeadingLabel.Caption := 'Preparing Installation';
+      ContinueButton.Enabled := False;
+      InstallHeadingLabel.Caption := 'Fetching Mod Information';
       PathsPanel.Visible := False;
-      ProgressStepLabel.Caption := 'Downloading Mod Information…';
+      ProgressStepLabel.Caption := 'Downloading mod information…';
       ProgressPanel.Visible := True;
     end;
 
-    TTask.VerifyFreelancerAndFlsr:
+    TTask.VerifyFlsrInstallation:
     begin
+      ContinueButton.Enabled := False;
+      InstallHeadingLabel.Caption := 'Verifying Installation';
+      PathsPanel.Visible := False;
+      ProgressStepLabel.Caption := 'Checking installed mod contents…';
+      ProgressPanel.Visible := True;
+    end;
+
+    TTask.VerifyFreelancerAndFlsrPath:
+    begin
+      ContinueButton.Enabled := True;
       InstallHeadingLabel.Caption := 'Preparing Installation';
       FreelancerPathInput.Text := '';
-      FlsrPathInput.Text := '';
+      FlsrPathInput.Text := GetSettings.LivePath;
       PathsPanel.Enabled := True;
       PathsPanel.Visible := True;
       ProgressPanel.Visible := False;
@@ -271,31 +337,28 @@ begin
 
     TTask.CopyFreelancer:
     begin
+      ContinueButton.Enabled := False;
       InstallHeadingLabel.Caption := 'Installing';
       PathsPanel.Visible := False;
       ProgressStepLabel.Caption := 'Copying Freelancer files to FL:SR directory…';
-      ProgressBar.Position := 0;
-      ProgressLabel.Caption := '0%';
       ProgressPanel.Visible := True;
     end;
 
     TTask.DownloadMod:
     begin
+      ContinueButton.Enabled := False;
       InstallHeadingLabel.Caption := 'Installing';
       PathsPanel.Visible := False;
-      ProgressStepLabel.Caption := 'Downloading Mod Content…';
-      ProgressBar.Position := 0;
-      ProgressLabel.Caption := '0%';
+      ProgressStepLabel.Caption := 'Downloading mod contents…';
       ProgressPanel.Visible := True;
     end;
 
     TTask.DecodeMod:
     begin
+      ContinueButton.Enabled := False;
       InstallHeadingLabel.Caption := 'Installing';
       PathsPanel.Visible := False;
-      ProgressStepLabel.Caption := 'Decompressing Mod Content…';
-      ProgressBar.Position := 0;
-      ProgressLabel.Caption := '0%';
+      ProgressStepLabel.Caption := 'Decompressing mod contents…';
       ProgressPanel.Visible := True;
     end;
   end;
@@ -304,13 +367,20 @@ end;
 constructor TInstallFrame.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  FLastBundleMeta.InitEmpty;
   FLastProgressUpdate := Now;
 end;
 
-procedure TInstallFrame.SetUp;
+procedure TInstallFrame.BeginInstallWorkflow;
 begin
   SetUpInstallStep(TTask.DownloadMeta);
-  DownloadMeta(@SetInstallTaskDone, @SetInstallProgress);
+  DownloadMeta(@SetBundleMeta, @SetInstallTaskDone, @SetInstallProgress);
+end;
+
+procedure TInstallFrame.BeginUpdateWorkflow;
+begin
+  SetUpInstallStep(TTask.DownloadMeta);
+  DownloadMeta(@SetBundleMeta, @SetUpdateTaskDone, @SetInstallProgress);
 end;
 
 end.
