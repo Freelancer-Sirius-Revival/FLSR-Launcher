@@ -147,9 +147,10 @@ begin
       end
       else
       begin
-        FreelancerPathError.Visible := True;
+        FreelancerPathError.Caption := '';
+        FlsrPathError.Caption := '';
         if Errors.FreelancerInvalid then
-          FreelancerPathError.Caption := 'Invalid installation. Make sure it contains an unmodified english Freelancer installation!';
+          FreelancerPathError.Caption := 'Invalid installation. Make sure it contains an unmodified Freelancer installation!';
         if Errors.FlsrInvalid then
           FlsrPathError.Caption := 'Cannot write data. Make sure you are allowed to write files there, or chose another location!'
         else if Errors.MissingBytes > 0 then

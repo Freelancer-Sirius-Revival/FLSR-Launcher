@@ -46,7 +46,8 @@ implementation
 uses
   UBundle,
   UCopyFiles,
-  UInstallSteps;
+  UInstallSteps,
+  USettings;
 
 type
   TVerifyFreelancerAndFLsrData = record
@@ -234,6 +235,8 @@ begin
         else
           Errors.MissingBytes := 0;
         Result := Result and (Errors.MissingBytes = 0);
+        if Result then
+          WriteFlsrPathToConfig(PVerifyFreelancerAndFlsrData(FTask.Data)^.FlsrPath);
 
         Assert(not Assigned(FileList));
         Dispose(PVerifyFreelancerAndFlsrData(FTask.Data));
@@ -298,8 +301,8 @@ begin
 
         try
           try
-            Stream := TFileStream.Create(PDecodeData(FTask.Data)^.TargetDirectory + DirectorySeparator + 'version.flsr', fmCreate);
-            Stream.WriteBuffer(FMeta.ContentVersion, SizeOf(FMeta.ContentVersion));
+            Stream := TFileStream.Create(PDecodeData(FTask.Data)^.TargetDirectory + DirectorySeparator + FlsrVersionFileName, fmCreate);
+            Stream.WriteBuffer(FMeta.ContentVersion, SizeOf(TBundleMeta.ContentVersion));
           except
           end;
         finally
